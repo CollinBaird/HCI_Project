@@ -15,10 +15,10 @@ export function Layout() {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-900">UPlan</h1>
-          <p className="text-sm text-gray-500 mt-1">Plan your perfect event</p>
+      <aside className="w-64 bg-[#0d1f51] border-r border-blue-900 text-white flex flex-col">
+        <div className="p-6 border-b border-blue-900">
+          <h1 className="text-2xl font-bold text-white">UPlan</h1>
+          <p className="text-sm text-blue-200 mt-1">Plan your perfect event</p>
         </div>
         
         <nav className="flex-1 p-4 space-y-1">
@@ -32,8 +32,8 @@ export function Layout() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-gray-700 hover:bg-gray-100"
+                      ? "bg-white text-[#0d1f51]"
+                      : "text-white hover:bg-blue-700"
                   }`
                 }
               >
