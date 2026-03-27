@@ -1,7 +1,7 @@
 
-  # Event planning site
+  # UPlan
 
-  This is a code bundle for Event planning site. The original project is available at https://www.figma.com/design/KH24QNcMvS28JN8afRTTkx/Event-planning-site.
+  This is a code bundle for UPlan. The original project is available at https://www.figma.com/design/KH24QNcMvS28JN8afRTTkx/Event-planning-site.
 
   ## Running the code
 
