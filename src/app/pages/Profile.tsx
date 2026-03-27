@@ -10,7 +10,6 @@ export function Profile() {
     location: "San Francisco, CA",
     joinDate: "January 2025",
     membershipType: "Premium",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
   };
 
   const stats = [
@@ -60,11 +59,9 @@ export function Profile() {
           <div className="lg:col-span-1">
             <Card className="p-6">
               <div className="text-center">
-                <img
-                  src={userProfile.avatar}
-                  alt={userProfile.name}
-                  className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-                />
+                <div className="w-32 h-32 rounded-full mx-auto mb-4 bg-gray-100 border border-gray-200 flex items-center justify-center">
+                  <User className="w-14 h-14 text-gray-400" />
+                </div>
                 <h2 className="text-xl font-bold text-gray-900 mb-1">{userProfile.name}</h2>
                 <Badge className="mb-4">{userProfile.membershipType} Member</Badge>
                 

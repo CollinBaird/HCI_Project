@@ -1,4 +1,4 @@
-import { MessageSquare, Send, Search } from "lucide-react";
+import { MessageSquare, Send, Search, User } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { useState } from "react";
@@ -13,7 +13,6 @@ export function Messages() {
       lastMessage: "We can accommodate your request for the extra setup time.",
       time: "10:30 AM",
       unread: 2,
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
     },
     {
       id: 2,
@@ -21,7 +20,6 @@ export function Messages() {
       lastMessage: "Here's the updated menu for your approval.",
       time: "Yesterday",
       unread: 0,
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
     },
     {
       id: 3,
@@ -29,7 +27,6 @@ export function Messages() {
       lastMessage: "The flower arrangements look perfect!",
       time: "2 days ago",
       unread: 1,
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
     },
     {
       id: 4,
@@ -37,7 +34,6 @@ export function Messages() {
       lastMessage: "Your event is confirmed for June 10th.",
       time: "Mar 20",
       unread: 0,
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
     },
   ];
 
@@ -109,11 +105,12 @@ export function Messages() {
                     selectedConversation === conversation.id ? "bg-blue-50" : ""
                   }`}
                 >
-                  <img
-                    src={conversation.avatar}
-                    alt={conversation.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
+                  <div
+                    className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <User className="w-6 h-6 text-gray-400" />
+                  </div>
                   <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold text-gray-900 text-sm truncate">
@@ -140,11 +137,12 @@ export function Messages() {
             {/* Header */}
             <div className="p-4 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <img
-                  src={conversations[0].avatar}
-                  alt={conversations[0].name}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
+                <div
+                  className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center"
+                  aria-hidden="true"
+                >
+                  <User className="w-5 h-5 text-gray-400" />
+                </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">{conversations[0].name}</h3>
                   <p className="text-sm text-gray-500">Online</p>
