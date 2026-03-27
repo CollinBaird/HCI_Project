@@ -1,17 +1,18 @@
 import { MapPin, Users, DollarSign, Star } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
 export function Venues() {
   const venues = [
     {
       id: 1,
-      name: "Grand Ballroom",
-      location: "Downtown Plaza, 5th Avenue",
+      name: "DeBaby on the Beta Flawn",
+      location: "Beta Flawn, Main Campus",
       capacity: 500,
       pricePerHour: 350,
       rating: 4.8,
-      image: "https://images.unsplash.com/photo-1519167758481-83f29da8c2f0?w=800&h=600&fit=crop",
+      image: "/images/beta.png",
       amenities: ["WiFi", "AV Equipment", "Catering Kitchen", "Parking"],
       available: true,
     },
@@ -61,7 +62,7 @@ export function Venues() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {venues.map((venue) => (
             <Card key={venue.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <img
+              <ImageWithFallback
                 src={venue.image}
                 alt={venue.name}
                 className="w-full h-48 object-cover"
