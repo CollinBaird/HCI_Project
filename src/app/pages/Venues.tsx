@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { MapPin, Users, DollarSign, Star } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Calendar } from "../components/ui/calendar";
-import { addStoredEvent } from "../eventStore";
+import { addStoredEvent, updateCombinedPlanDraft } from "../eventStore";
 
 export function Venues() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const formSectionRef = React.useRef<HTMLDivElement | null>(null);
   const [selectedVenueId, setSelectedVenueId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -16,6 +17,8 @@ export function Venues() {
   const [partySize, setPartySize] = useState("");
   const [location, setLocation] = useState("");
   const [organizationName, setOrganizationName] = useState("");
+  const selectOnly = searchParams.get("selectOnly") === "1";
+  const returnTo = searchParams.get("returnTo") || "/plan-event/combined";
 
   const venues = [
     {
@@ -67,15 +70,26 @@ export function Venues() {
   const selectedVenue = venues.find((venue) => venue.id === selectedVenueId);
 
   const handleSelectVenue = (venueId: number) => {
+    const venue = venues.find((item) => item.id === venueId);
+    if (!venue) {
+      return;
+    }
+
+    if (selectOnly) {
+      updateCombinedPlanDraft({
+        venueName: venue.name,
+        venueLocation: venue.location,
+      });
+      navigate(returnTo);
+      return;
+    }
+
     if (selectedVenueId === venueId) {
       setSelectedVenueId(null);
       return;
     }
 
-    const venue = venues.find((item) => item.id === venueId);
-    if (venue) {
-      setLocation(venue.location);
-    }
+    setLocation(venue.location);
     setSelectedVenueId(venueId);
     window.setTimeout(() => {
       formSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -164,16 +178,18 @@ export function Venues() {
                   disabled={!venue.available}
                 >
                   {venue.available
-                    ? selectedVenueId === venue.id
-                      ? "Change"
-                      : "Select Venue"
+                    ? selectOnly
+                      ? "Select Venue"
+                      : selectedVenueId === venue.id
+                        ? "Change"
+                        : "Select Venue"
                     : "Not Available"}
                 </button>
               </div>
             </Card>
           ))}
         </div>
-        {selectedVenue && (
+        {!selectOnly && selectedVenue && (
           <div ref={formSectionRef}>
             <Card className="mt-8 p-6 border-2 border-blue-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Venue Booking Form</h2>
