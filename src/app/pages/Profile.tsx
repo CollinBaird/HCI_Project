@@ -2,17 +2,22 @@ import React from "react";
 import { User, Mail, Phone, MapPin, Calendar } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../components/ui/dialog";
 import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from "../eventStore";
 
 export function Profile() {
-  const userProfile = {
+  const [userProfile, setUserProfile] = React.useState({
     name: "Parker Savage",
     email: "parker.savage@utexas.edu",
-    phone: "+1 (555) 123-4567",
+    phone: "+1 (676) 676-7676",
     location: "Austin, TX",
     joinDate: "January 2026",
     membershipType: "Basic",
-  };
+  });
+  const [isEditOpen, setIsEditOpen] = React.useState(false);
+  const [draftEmail, setDraftEmail] = React.useState(userProfile.email);
+  const [draftPhone, setDraftPhone] = React.useState(userProfile.phone);
+  const [draftLocation, setDraftLocation] = React.useState(userProfile.location);
 
   const [events, setEvents] = React.useState<PlannedEvent[]>([]);
 
@@ -53,6 +58,23 @@ export function Profile() {
       }),
     }));
 
+  const openEditModal = () => {
+    setDraftEmail(userProfile.email);
+    setDraftPhone(userProfile.phone);
+    setDraftLocation(userProfile.location);
+    setIsEditOpen(true);
+  };
+
+  const handleSaveProfile = () => {
+    setUserProfile((prev) => ({
+      ...prev,
+      email: draftEmail,
+      phone: draftPhone,
+      location: draftLocation,
+    }));
+    setIsEditOpen(false);
+  };
+
   return (
     <div className="p-8">
       <div className="max-w-5xl mx-auto">
@@ -91,7 +113,10 @@ export function Profile() {
                   </div>
                 </div>
 
-                <button className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button
+                  onClick={openEditModal}
+                  className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Edit Profile
                 </button>
               </div>
@@ -145,6 +170,63 @@ export function Profile() {
           </div>
         </div>
       </div>
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="max-w-md">
+          <DialogTitle>Edit Profile</DialogTitle>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="profile-email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                id="profile-email"
+                type="email"
+                value={draftEmail}
+                onChange={(event) => setDraftEmail(event.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="profile-phone" className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number
+              </label>
+              <input
+                id="profile-phone"
+                type="tel"
+                value={draftPhone}
+                onChange={(event) => setDraftPhone(event.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="profile-location" className="block text-sm font-medium text-gray-700 mb-1">
+                Location
+              </label>
+              <input
+                id="profile-location"
+                type="text"
+                value={draftLocation}
+                onChange={(event) => setDraftLocation(event.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-between gap-3">
+            <button
+              onClick={() => setIsEditOpen(false)}
+              className="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSaveProfile}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Save
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

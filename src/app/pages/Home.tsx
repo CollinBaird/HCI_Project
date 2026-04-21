@@ -1,7 +1,23 @@
 import React from "react";
 import { Calendar, MapPin, Utensils, Users } from "lucide-react";
 import { Card } from "../components/ui/card";
-import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from "../eventStore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
+import {
+  getEventsUpdatedEventName,
+  getStoredEvents,
+  removeStoredEvent,
+  type PlannedEvent,
+} from "../eventStore";
 
 export function Home() {
   const [upcomingEvents, setUpcomingEvents] = React.useState<PlannedEvent[]>([]);
@@ -92,6 +108,30 @@ export function Home() {
                       </span>
                     </div>
                   </div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className="px-3 py-2 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors">
+                        Cancel Event
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will cancel "{event.title}" and remove it from your upcoming events and calendar.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Go Back</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => removeStoredEvent(event.id)}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Yes, Cancel Event
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               ))
             )}
