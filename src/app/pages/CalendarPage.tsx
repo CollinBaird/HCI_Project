@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router";
 import { Calendar as CalendarIcon, Clock, MapPin } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../components/ui/dialog";
 import {
   getEventsUpdatedEventName,
   getStoredEvents,
@@ -10,8 +12,10 @@ import {
 } from "../eventStore";
 
 export function CalendarPage() {
+  const navigate = useNavigate();
   const [events, setEvents] = React.useState<PlannedEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = React.useState<PlannedEvent | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   const refreshEvents = React.useCallback(() => {
     const updatedEvents = getStoredEvents();
@@ -37,8 +41,14 @@ export function CalendarPage() {
     }
 
     removeStoredEvent(selectedEvent.id);
+    setIsDetailsOpen(false);
     setSelectedEvent(null);
     refreshEvents();
+  };
+
+  const closeDetailsModal = () => {
+    setIsDetailsOpen(false);
+    setSelectedEvent(null);
   };
 
   const getStatusColor = (status: string) => {
@@ -117,12 +127,15 @@ export function CalendarPage() {
                           {event.type}
                         </span>
                       </div>
-                    <button
-                      onClick={() => setSelectedEvent(event)}
+                      <button
+                      onClick={() => {
+                        setSelectedEvent(event);
+                        setIsDetailsOpen(true);
+                      }}
                       className="mt-3 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                     >
                       View Details
-                    </button>
+                      </button>
                     </div>
                   </div>
                 ))
@@ -153,7 +166,10 @@ export function CalendarPage() {
             <Card className="p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
               <div className="space-y-2">
-                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button
+                  onClick={() => navigate("/plan-event")}
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Add New Event
                 </button>
                 <button className="w-full px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
@@ -165,11 +181,19 @@ export function CalendarPage() {
           </div>
         </div>
       </div>
-      {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <Card className="w-full max-w-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Event Details</h2>
-            <div className="space-y-2 text-sm text-gray-700 mb-6">
+      <Dialog
+        open={isDetailsOpen}
+        onOpenChange={(open) => {
+          setIsDetailsOpen(open);
+          if (!open) {
+            setSelectedEvent(null);
+          }
+        }}
+      >
+        {selectedEvent && (
+          <DialogContent className="max-w-lg">
+            <DialogTitle>Event Details</DialogTitle>
+            <div className="space-y-2 text-sm text-gray-700 mb-2">
               <p><span className="font-semibold">Title:</span> {selectedEvent.title}</p>
               <p><span className="font-semibold">Date:</span> {selectedEvent.date}</p>
               <p><span className="font-semibold">Time:</span> {selectedEvent.time}</p>
@@ -181,9 +205,9 @@ export function CalendarPage() {
                 <p><span className="font-semibold">Caterer:</span> {selectedEvent.catererName}</p>
               )}
             </div>
-            <div className="flex gap-3">
+            <DialogFooter className="sm:justify-between gap-3">
               <button
-                onClick={() => setSelectedEvent(null)}
+                onClick={closeDetailsModal}
                 className="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Close
@@ -194,10 +218,10 @@ export function CalendarPage() {
               >
                 Cancel Event
               </button>
-            </div>
-          </Card>
-        </div>
-      )}
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   );
 }
