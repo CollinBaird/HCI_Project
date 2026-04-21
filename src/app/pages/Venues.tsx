@@ -5,7 +5,7 @@ import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Calendar } from "../components/ui/calendar";
-import { addStoredEvent, updateCombinedPlanDraft } from "../eventStore";
+import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from "../eventStore";
 
 export function Venues() {
   const navigate = useNavigate();
@@ -101,15 +101,25 @@ export function Venues() {
       return;
     }
 
-    addStoredEvent({
+    const dateStr = selectedDate.toISOString().split("T")[0];
+
+    const bookingId = addStoredEvent({
       title: `${organizationName} Venue Booking`,
-      date: selectedDate.toISOString().split("T")[0],
+      date: dateStr,
       time: eventTime,
       venue: selectedVenue.name,
       status: "confirmed",
       type: "venue",
       partySize: Number(partySize),
       organizationName,
+    });
+
+    addBookingConversation({
+      bookingId,
+      vendorName: selectedVenue.name,
+      organizationName,
+      date: dateStr,
+      type: "venue",
     });
 
     navigate("/calendar");

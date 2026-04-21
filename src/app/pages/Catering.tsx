@@ -4,7 +4,7 @@ import { Utensils, Users, DollarSign, ChefHat } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Calendar } from "../components/ui/calendar";
-import { addStoredEvent, updateCombinedPlanDraft } from "../eventStore";
+import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from "../eventStore";
 
 export function Catering() {
   const navigate = useNavigate();
@@ -96,9 +96,11 @@ export function Catering() {
       return;
     }
 
-    addStoredEvent({
+    const dateStr = selectedDate.toISOString().split("T")[0];
+
+    const bookingId = addStoredEvent({
       title: `${organizationName} Catering`,
-      date: selectedDate.toISOString().split("T")[0],
+      date: dateStr,
       time: eventTime,
       venue: location,
       status: "confirmed",
@@ -106,6 +108,14 @@ export function Catering() {
       partySize: Number(partySize),
       organizationName,
       catererName: selectedCaterer.name,
+    });
+
+    addBookingConversation({
+      bookingId,
+      vendorName: selectedCaterer.name,
+      organizationName,
+      date: dateStr,
+      type: "catering",
     });
 
     navigate("/calendar");

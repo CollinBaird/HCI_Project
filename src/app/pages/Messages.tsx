@@ -1,79 +1,63 @@
-import { MessageSquare, Send, Search, User } from "lucide-react";
+import { MessageSquare, Send, Search, User, Building2, ChefHat } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  getStoredConversations,
+  addMessageToConversation,
+  markConversationRead,
+  getConversationsUpdatedEventName,
+  type Conversation,
+} from "../eventStore";
+
+function ConversationIcon({ type }: { type: Conversation["type"] }) {
+  if (type === "catering") return <ChefHat className="w-6 h-6 text-gray-400" />;
+  return <Building2 className="w-6 h-6 text-gray-400" />;
+}
 
 export function Messages() {
-  const [selectedConversation, setSelectedConversation] = useState(1);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [draft, setDraft] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const conversations = [
-    {
-      id: 1,
-      name: "Grand Ballroom - John Smith",
-      lastMessage: "We can accommodate your request for the extra setup time.",
-      time: "10:30 AM",
-      unread: 2,
-    },
-    {
-      id: 2,
-      name: "Gourmet Delights Catering",
-      lastMessage: "Here's the updated menu for your approval.",
-      time: "Yesterday",
-      unread: 0,
-    },
-    {
-      id: 3,
-      name: "Sarah Johnson - Wedding Planner",
-      lastMessage: "The flower arrangements look perfect!",
-      time: "2 days ago",
-      unread: 1,
-    },
-    {
-      id: 4,
-      name: "Convention Center Team",
-      lastMessage: "Your event is confirmed for June 10th.",
-      time: "Mar 20",
-      unread: 0,
-    },
-  ];
+  const refresh = useCallback(() => {
+    setConversations(getStoredConversations());
+  }, []);
 
-  const messages = [
-    {
-      id: 1,
-      sender: "John Smith",
-      content: "Hello! I received your inquiry about the Grand Ballroom for April 15th.",
-      time: "10:15 AM",
-      isOwn: false,
-    },
-    {
-      id: 2,
-      sender: "You",
-      content: "Yes, we need the space from 5 PM to midnight. Is that available?",
-      time: "10:20 AM",
-      isOwn: true,
-    },
-    {
-      id: 3,
-      sender: "John Smith",
-      content: "Absolutely! The ballroom is available. Would you also need setup time before 5 PM?",
-      time: "10:25 AM",
-      isOwn: false,
-    },
-    {
-      id: 4,
-      sender: "You",
-      content: "Yes, we'd need access from 3 PM for setup. Is that possible?",
-      time: "10:28 AM",
-      isOwn: true,
-    },
-    {
-      id: 5,
-      sender: "John Smith",
-      content: "We can accommodate your request for the extra setup time.",
-      time: "10:30 AM",
-      isOwn: false,
-    },
-  ];
+  useEffect(() => {
+    refresh();
+    const eventName = getConversationsUpdatedEventName();
+    window.addEventListener(eventName, refresh);
+    return () => window.removeEventListener(eventName, refresh);
+  }, [refresh]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [selectedId, conversations]);
+
+  const handleSelectConversation = (id: number) => {
+    setSelectedId(id);
+    markConversationRead(id);
+    setDraft("");
+  };
+
+  const handleSend = () => {
+    if (!draft.trim() || selectedId === null) return;
+    addMessageToConversation(selectedId, draft.trim());
+    setDraft("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSend();
+  };
+
+  const filtered = conversations.filter((c) =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const selected = conversations.find((c) => c.id === selectedId) ?? null;
 
   return (
     <div className="p-8 h-full">
@@ -92,104 +76,128 @@ export function Messages() {
                 <input
                   type="text"
                   placeholder="Search messages..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
+
             <div className="flex-1 overflow-y-auto">
-              {conversations.map((conversation) => (
-                <button
-                  key={conversation.id}
-                  onClick={() => setSelectedConversation(conversation.id)}
-                  className={`w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors ${
-                    selectedConversation === conversation.id ? "bg-blue-50" : ""
-                  }`}
-                >
-                  <div
-                    className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center"
-                    aria-hidden="true"
+              {filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12 text-gray-400">
+                  <MessageSquare className="w-10 h-10 mb-3 opacity-40" />
+                  <p className="text-sm font-medium">No conversations yet</p>
+                  <p className="text-xs mt-1">Book a venue or catering to start a conversation</p>
+                </div>
+              ) : (
+                filtered.map((conv) => (
+                  <button
+                    key={conv.id}
+                    onClick={() => handleSelectConversation(conv.id)}
+                    className={`w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors ${
+                      selectedId === conv.id ? "bg-blue-50" : ""
+                    }`}
                   >
-                    <User className="w-6 h-6 text-gray-400" />
-                  </div>
-                  <div className="flex-1 text-left min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-semibold text-gray-900 text-sm truncate">
-                        {conversation.name}
-                      </h3>
-                      <span className="text-xs text-gray-500">{conversation.time}</span>
+                    <div className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+                      <ConversationIcon type={conv.type} />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600 truncate">
-                        {conversation.lastMessage}
-                      </p>
-                      {conversation.unread > 0 && (
-                        <Badge className="ml-2 shrink-0">{conversation.unread}</Badge>
-                      )}
+                    <div className="flex-1 text-left min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="font-semibold text-gray-900 text-sm truncate">{conv.name}</h3>
+                        <span className="text-xs text-gray-500 shrink-0 ml-1">{conv.time}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-gray-600 truncate">{conv.lastMessage}</p>
+                        {conv.unread > 0 && (
+                          <Badge className="ml-2 shrink-0">{conv.unread}</Badge>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))
+              )}
             </div>
           </div>
 
           {/* Message Thread */}
           <div className="flex-1 flex flex-col">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center"
-                  aria-hidden="true"
-                >
-                  <User className="w-5 h-5 text-gray-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{conversations[0].name}</h3>
-                  <p className="text-sm text-gray-500">Online</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.isOwn ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-md px-4 py-2 rounded-lg ${
-                      message.isOwn
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 text-gray-900"
-                    }`}
-                  >
-                    <p>{message.content}</p>
-                    <p
-                      className={`text-xs mt-1 ${
-                        message.isOwn ? "text-blue-100" : "text-gray-500"
-                      }`}
-                    >
-                      {message.time}
-                    </p>
+            {selected ? (
+              <>
+                {/* Header */}
+                <div className="p-4 border-b border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
+                      <ConversationIcon type={selected.type} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{selected.name}</h3>
+                      <p className="text-sm text-gray-500 capitalize">{selected.type} provider</p>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            {/* Input */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  <Send className="w-5 h-5" />
-                </button>
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {selected.messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.isOwn ? "justify-end" : "justify-start"}`}
+                    >
+                      {!message.isOwn && (
+                        <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center mr-2 mt-1 shrink-0">
+                          <User className="w-4 h-4 text-gray-400" />
+                        </div>
+                      )}
+                      <div
+                        className={`max-w-md px-4 py-3 rounded-2xl ${
+                          message.isOwn
+                            ? "bg-blue-600 text-white rounded-br-sm"
+                            : "bg-gray-100 text-gray-900 rounded-bl-sm"
+                        }`}
+                      >
+                        <p className="text-sm leading-relaxed">{message.content}</p>
+                        <p
+                          className={`text-xs mt-1 ${
+                            message.isOwn ? "text-blue-200" : "text-gray-400"
+                          }`}
+                        >
+                          {message.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input */}
+                <div className="p-4 border-t border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder={`Message ${selected.name}...`}
+                      value={draft}
+                      onChange={(e) => setDraft(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={handleSend}
+                      disabled={!draft.trim()}
+                      className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+                <MessageSquare className="w-14 h-14 mb-4 opacity-30" />
+                <p className="text-lg font-medium">Select a conversation</p>
+                <p className="text-sm mt-1">Choose a booking conversation from the left</p>
               </div>
-            </div>
+            )}
           </div>
         </Card>
       </div>

@@ -7,6 +7,25 @@ export type EventType =
   | "conference"
   | "charity";
 
+export type ChatMessage = {
+  id: number;
+  sender: string;
+  content: string;
+  time: string;
+  isOwn: boolean;
+};
+
+export type Conversation = {
+  id: number;
+  name: string;
+  bookingId: number;
+  type: "venue" | "catering" | "combined";
+  lastMessage: string;
+  time: string;
+  unread: number;
+  messages: ChatMessage[];
+};
+
 export type PlannedEvent = {
   id: number;
   title: string;
@@ -58,11 +77,12 @@ export function saveStoredEvents(events: PlannedEvent[]) {
   window.dispatchEvent(new Event(EVENTS_UPDATED));
 }
 
-export function addStoredEvent(event: Omit<PlannedEvent, "id">) {
+export function addStoredEvent(event: Omit<PlannedEvent, "id">): number {
   const current = getStoredEvents();
   const nextId = current.length > 0 ? Math.max(...current.map((item) => item.id)) + 1 : 1;
   const nextEvents = [...current, { id: nextId, ...event }];
   saveStoredEvents(nextEvents);
+  return nextId;
 }
 
 export function removeStoredEvent(eventId: number) {
@@ -118,4 +138,106 @@ export function clearCombinedPlanDraft() {
 
 export function getCombinedDraftUpdatedEventName() {
   return COMBINED_DRAFT_UPDATED;
+}
+
+const CONVERSATIONS_KEY = "uplan_conversations";
+const CONVERSATIONS_UPDATED = "uplan-conversations-updated";
+
+export function getStoredConversations(): Conversation[] {
+  if (typeof window === "undefined") return [];
+  const raw = window.localStorage.getItem(CONVERSATIONS_KEY);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as Conversation[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveStoredConversations(conversations: Conversation[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations));
+  window.dispatchEvent(new Event(CONVERSATIONS_UPDATED));
+}
+
+export function addBookingConversation(params: {
+  bookingId: number;
+  vendorName: string;
+  organizationName: string;
+  date: string;
+  type: "venue" | "catering" | "combined";
+}) {
+  const { bookingId, vendorName, organizationName, date, type } = params;
+  const formattedDate = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const userName = "Parker Savage";
+  const contactLine = "Please don't hesitate to contact us if you need anything — we're here to help make your event a success!";
+  const welcomeContent =
+    type === "venue"
+      ? `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate}! We are thrilled to host your event and look forward to making it a memorable occasion. ${contactLine}`
+      : `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate}! We're excited to provide exceptional catering service for your event. ${contactLine}`;
+
+  const timeStr = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+
+  const welcomeMsg: ChatMessage = {
+    id: 1,
+    sender: vendorName,
+    content: welcomeContent,
+    time: timeStr,
+    isOwn: false,
+  };
+
+  const current = getStoredConversations();
+  const nextId = current.length > 0 ? Math.max(...current.map((c) => c.id)) + 1 : 1;
+
+  saveStoredConversations([
+    ...current,
+    {
+      id: nextId,
+      name: vendorName,
+      bookingId,
+      type,
+      lastMessage: welcomeContent,
+      time: timeStr,
+      unread: 1,
+      messages: [welcomeMsg],
+    },
+  ]);
+}
+
+export function addMessageToConversation(conversationId: number, content: string) {
+  const current = getStoredConversations();
+  const timeStr = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+
+  const updated = current.map((conv) => {
+    if (conv.id !== conversationId) return conv;
+    const newMsg: ChatMessage = {
+      id: conv.messages.length > 0 ? Math.max(...conv.messages.map((m) => m.id)) + 1 : 1,
+      sender: "You",
+      content,
+      time: timeStr,
+      isOwn: true,
+    };
+    return { ...conv, lastMessage: content, time: timeStr, unread: 0, messages: [...conv.messages, newMsg] };
+  });
+
+  saveStoredConversations(updated);
+}
+
+export function markConversationRead(conversationId: number) {
+  const current = getStoredConversations();
+  const updated = current.map((conv) =>
+    conv.id === conversationId ? { ...conv, unread: 0 } : conv
+  );
+  saveStoredConversations(updated);
+}
+
+export function getConversationsUpdatedEventName() {
+  return CONVERSATIONS_UPDATED;
 }
