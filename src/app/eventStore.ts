@@ -166,9 +166,11 @@ export function addBookingConversation(params: {
   vendorName: string;
   organizationName: string;
   date: string;
+  time: string;
+  partySize: number;
   type: "venue" | "catering" | "combined";
 }) {
-  const { bookingId, vendorName, organizationName, date, type } = params;
+  const { bookingId, vendorName, organizationName, date, time, partySize, type } = params;
   const formattedDate = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -180,8 +182,8 @@ export function addBookingConversation(params: {
   const contactLine = "Please don't hesitate to contact us if you need anything — we're here to help make your event a success!";
   const welcomeContent =
     type === "venue"
-      ? `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate}! We are thrilled to host your event and look forward to making it a memorable occasion. ${contactLine}`
-      : `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate}! We're excited to provide exceptional catering service for your event. ${contactLine}`;
+      ? `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate} at ${time} for ${partySize} guests! We are thrilled to host your event and look forward to making it a memorable occasion. ${contactLine}`
+      : `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate} at ${time} for ${partySize} guests! We're excited to provide exceptional catering service for your event. ${contactLine}`;
 
   const timeStr = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 

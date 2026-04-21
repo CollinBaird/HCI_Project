@@ -11,18 +11,21 @@ export function PlanEvent() {
       title: "Catering",
       description: "Browse catering partners, specialties, and dietary options.",
       icon: Utensils,
+      image: "/images/cater.png",
       onClick: () => navigate("/catering"),
     },
     {
       title: "Venue",
       description: "Explore available venues with capacity, pricing, and amenities.",
       icon: MapPin,
+      image: "/images/venue.png",
       onClick: () => navigate("/venues"),
     },
     {
       title: "Catering + Venue",
       description: "Plan both together with linked selections and placeholders.",
       icon: Layers,
+      image: "/images/catervenue.png",
       onClick: () => navigate("/plan-event/combined"),
     },
   ];
@@ -44,6 +47,13 @@ export function PlanEvent() {
                 className="p-6 border hover:shadow-md hover:border-blue-300 transition-all cursor-pointer"
                 onClick={option.onClick}
               >
+                {option.image && (
+                  <img
+                    src={option.image}
+                    alt={option.title}
+                    className="w-full h-32 object-cover rounded-lg mb-4"
+                  />
+                )}
                 <Icon className="w-8 h-8 text-blue-600 mb-4" />
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">{option.title}</h2>
                 <p className="text-sm text-gray-600">{option.description}</p>

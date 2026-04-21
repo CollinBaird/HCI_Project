@@ -67,9 +67,9 @@ export function Messages() {
           <p className="text-gray-600">Communicate with venues and vendors</p>
         </div>
 
-        <Card className="h-[calc(100%-5rem)] flex overflow-hidden">
-          {/* Conversations List */}
-          <div className="w-80 border-r border-gray-200 flex flex-col">
+        <Card className="h-[calc(100%-5rem)] flex overflow-hidden flex-row">
+          {/* Conversations List - Left Sidebar (25%) */}
+          <div className="w-1/4 min-w-64 border-r border-gray-200 flex flex-col overflow-hidden">
             <div className="p-4 border-b border-gray-200">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -120,8 +120,8 @@ export function Messages() {
             </div>
           </div>
 
-          {/* Message Thread */}
-          <div className="flex-1 flex flex-col">
+          {/* Message Thread - Right Side (75%) */}
+          <div className="flex-1 flex flex-col overflow-hidden">
             {selected ? (
               <>
                 {/* Header */}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { MapPin, Users, DollarSign, Star } from "lucide-react";
+import { MapPin, Users, DollarSign, Star, Search, ArrowLeft } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
@@ -17,6 +17,8 @@ export function Venues() {
   const [partySize, setPartySize] = useState("");
   const [location, setLocation] = useState("");
   const [organizationName, setOrganizationName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [budgetFilter, setBudgetFilter] = useState<string>("");
   const selectOnly = searchParams.get("selectOnly") === "1";
   const returnTo = searchParams.get("returnTo") || "/plan-event/combined";
 
@@ -27,6 +29,7 @@ export function Venues() {
       location: "Beta Flawn, Main Campus",
       capacity: 500,
       pricePerHour: 350,
+      priceTier: "$$$",
       rating: 4.8,
       image: "/images/beta.png",
       amenities: ["WiFi", "AV Equipment", "Catering Kitchen", "Parking"],
@@ -38,6 +41,7 @@ export function Venues() {
       location: "Riverside Gardens, West End",
       capacity: 200,
       pricePerHour: 250,
+      priceTier: "$$",
       rating: 4.9,
       image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
       amenities: ["Outdoor Space", "Garden Views", "Tent Available", "Parking"],
@@ -49,6 +53,7 @@ export function Venues() {
       location: "Business District, Main Street",
       capacity: 1000,
       pricePerHour: 600,
+      priceTier: "$$$$",
       rating: 4.6,
       image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
       amenities: ["WiFi", "AV Equipment", "Multiple Rooms", "Full Catering"],
@@ -60,6 +65,7 @@ export function Venues() {
       location: "City Center Tower, 42nd Floor",
       capacity: 150,
       pricePerHour: 400,
+      priceTier: "$$$",
       rating: 4.7,
       image: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=800&h=600&fit=crop",
       amenities: ["City Views", "Bar", "Outdoor Deck", "Elevator Access"],
@@ -68,6 +74,18 @@ export function Venues() {
   ];
 
   const selectedVenue = venues.find((venue) => venue.id === selectedVenueId);
+
+  const filteredVenues = venues.filter((venue) => {
+    const query = searchQuery.toLowerCase();
+    const matchesSearch = !query ||
+      venue.name.toLowerCase().includes(query) ||
+      venue.location.toLowerCase().includes(query) ||
+      venue.amenities.some(amenity => amenity.toLowerCase().includes(query));
+
+    const matchesBudget = !budgetFilter || venue.priceTier === budgetFilter;
+
+    return matchesSearch && matchesBudget;
+  });
 
   const handleSelectVenue = (venueId: number) => {
     const venue = venues.find((item) => item.id === venueId);
@@ -119,6 +137,8 @@ export function Venues() {
       vendorName: selectedVenue.name,
       organizationName,
       date: dateStr,
+      time: eventTime,
+      partySize: Number(partySize),
       type: "venue",
     });
 
@@ -128,13 +148,49 @@ export function Venues() {
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Venues</h1>
-          <p className="text-gray-600">Browse and book the perfect venue for your event</p>
+        <div className="mb-8 flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Venues</h1>
+            <p className="text-gray-600">Browse and book the perfect venue for your event</p>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="flex gap-4">
+            <div className="flex-1 relative max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by name or location..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="relative">
+              <select
+                value={budgetFilter}
+                onChange={(e) => setBudgetFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                <option value="">All Budgets</option>
+                <option value="$">$</option>
+                <option value="$$">$$</option>
+                <option value="$$$">$$$</option>
+                <option value="$$$$">$$$$</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {venues.map((venue) => (
+          {filteredVenues.map((venue) => (
             <Card key={venue.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <ImageWithFallback
                 src={venue.image}
@@ -162,7 +218,7 @@ export function Venues() {
                   </span>
                   <span className="flex items-center gap-1">
                     <DollarSign className="w-4 h-4" />
-                    ${venue.pricePerHour}/hour
+                    ${venue.pricePerHour}/hour ({venue.priceTier})
                   </span>
                   <span className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />

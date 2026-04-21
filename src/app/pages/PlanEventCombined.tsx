@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import { ArrowLeft } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Calendar } from "../components/ui/calendar";
 import {
   addStoredEvent,
+  addBookingConversation,
   clearCombinedPlanDraft,
   getCombinedDraftUpdatedEventName,
   getCombinedPlanDraft,
@@ -16,6 +18,7 @@ export function PlanEventCombined() {
   const [partySize, setPartySize] = React.useState("");
   const [organizationName, setOrganizationName] = React.useState("");
   const [draft, setDraft] = React.useState(getCombinedPlanDraft());
+  const [showSuccess, setShowSuccess] = React.useState(false);
 
   React.useEffect(() => {
     setDraft(getCombinedPlanDraft());
@@ -33,9 +36,10 @@ export function PlanEventCombined() {
       return;
     }
 
-    addStoredEvent({
+    const dateStr = selectedDate.toISOString().split("T")[0];
+    const bookingId = addStoredEvent({
       title: `${organizationName} Combined Booking`,
-      date: selectedDate.toISOString().split("T")[0],
+      date: dateStr,
       time: eventTime,
       venue: draft.venueName,
       status: "confirmed",
@@ -44,17 +48,57 @@ export function PlanEventCombined() {
       organizationName,
       catererName: draft.catererName,
     });
+
+    // Add conversation for venue
+    addBookingConversation({
+      bookingId,
+      vendorName: draft.venueName,
+      organizationName,
+      date: dateStr,
+      time: eventTime,
+      partySize: Number(partySize),
+      type: "venue",
+    });
+
+    // Add conversation for caterer
+    addBookingConversation({
+      bookingId,
+      vendorName: draft.catererName,
+      organizationName,
+      date: dateStr,
+      time: eventTime,
+      partySize: Number(partySize),
+      type: "catering",
+    });
+
     clearCombinedPlanDraft();
-    navigate("/calendar");
+    setShowSuccess(true);
+    setTimeout(() => {
+      navigate("/");
+    }, 2000);
   };
 
   return (
     <div className="p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Catering + Venue</h1>
-          <p className="text-gray-600">Select both options to begin building a combined event plan</p>
+        <div className="mb-8 flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Catering + Venue</h1>
+            <p className="text-gray-600">Select both options to begin building a combined event plan</p>
+          </div>
         </div>
+
+        {showSuccess && (
+          <Card className="mb-6 p-4 bg-green-50 border-green-200">
+            <p className="text-green-800 font-semibold">✓ Event booked successfully! Redirecting to home...</p>
+          </Card>
+        )}
 
         <Card className="p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -158,10 +202,10 @@ export function PlanEventCombined() {
 
           <button
             onClick={handleComplete}
-            disabled={!draft.venueName || !draft.catererName || !selectedDate || !eventTime || !partySize || !organizationName}
+            disabled={!draft.venueName || !draft.catererName || !selectedDate || !eventTime || !partySize || !organizationName || showSuccess}
             className="mt-8 w-full px-6 py-4 text-lg font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-green-300 disabled:cursor-not-allowed"
           >
-            Complete
+            {showSuccess ? "Redirecting..." : "Complete"}
           </button>
         </Card>
       </div>

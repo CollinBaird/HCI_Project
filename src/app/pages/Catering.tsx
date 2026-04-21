@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { Utensils, Users, DollarSign, ChefHat } from "lucide-react";
+import { Utensils, Users, DollarSign, ChefHat, Search, ArrowLeft } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Calendar } from "../components/ui/calendar";
@@ -16,6 +16,8 @@ export function Catering() {
   const [partySize, setPartySize] = useState("");
   const [location, setLocation] = useState("");
   const [organizationName, setOrganizationName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [budgetFilter, setBudgetFilter] = useState<string>("");
 
   const cateringOptions = [
     {
@@ -25,6 +27,7 @@ export function Catering() {
       rating: 4.9,
       minGuests: 50,
       pricePerPerson: 45,
+      priceTier: "$$",
       image: "https://images.unsplash.com/photo-1555244162-803834f70033?w=800&h=600&fit=crop",
       specialties: ["Corporate Events", "Weddings", "Buffet Style"],
       dietaryOptions: ["Vegetarian", "Vegan", "Gluten-Free", "Halal"],
@@ -36,6 +39,7 @@ export function Catering() {
       rating: 4.8,
       minGuests: 30,
       pricePerPerson: 65,
+      priceTier: "$$$",
       image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop",
       specialties: ["Plated Dinners", "Wine Pairing", "Custom Menus"],
       dietaryOptions: ["Vegetarian", "Pescatarian", "Keto"],
@@ -47,6 +51,7 @@ export function Catering() {
       rating: 4.7,
       minGuests: 25,
       pricePerPerson: 35,
+      priceTier: "$",
       image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&h=600&fit=crop",
       specialties: ["Outdoor Events", "Casual Gatherings", "Live Cooking"],
       dietaryOptions: ["Vegetarian", "Gluten-Free"],
@@ -58,6 +63,7 @@ export function Catering() {
       rating: 4.8,
       minGuests: 40,
       pricePerPerson: 50,
+      priceTier: "$$",
       image: "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=800&h=600&fit=crop",
       specialties: ["Tapas Style", "Family Platters", "Healthy Options"],
       dietaryOptions: ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free"],
@@ -67,6 +73,18 @@ export function Catering() {
   const selectedCaterer = cateringOptions.find((caterer) => caterer.id === selectedCatererId);
   const selectOnly = searchParams.get("selectOnly") === "1";
   const returnTo = searchParams.get("returnTo") || "/plan-event/combined";
+
+  const filteredCateringOptions = cateringOptions.filter((caterer) => {
+    const query = searchQuery.toLowerCase();
+    const matchesSearch = !query ||
+      caterer.name.toLowerCase().includes(query) ||
+      caterer.cuisine.toLowerCase().includes(query) ||
+      caterer.specialties.some(specialty => specialty.toLowerCase().includes(query));
+
+    const matchesBudget = !budgetFilter || caterer.priceTier === budgetFilter;
+
+    return matchesSearch && matchesBudget;
+  });
 
   const handleSelectCaterer = (catererId: number) => {
     const caterer = cateringOptions.find((item) => item.id === catererId);
@@ -115,6 +133,8 @@ export function Catering() {
       vendorName: selectedCaterer.name,
       organizationName,
       date: dateStr,
+      time: eventTime,
+      partySize: Number(partySize),
       type: "catering",
     });
 
@@ -124,13 +144,49 @@ export function Catering() {
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Catering Services</h1>
-          <p className="text-gray-600">Choose from our premium catering partners for your event</p>
+        <div className="mb-8 flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Catering Services</h1>
+            <p className="text-gray-600">Choose from our premium catering partners for your event</p>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="flex gap-4">
+            <div className="flex-1 relative max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by name or cuisine..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="relative">
+              <select
+                value={budgetFilter}
+                onChange={(e) => setBudgetFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                <option value="">All Budgets</option>
+                <option value="$">$</option>
+                <option value="$$">$$</option>
+                <option value="$$$">$$$</option>
+                <option value="$$$$">$$$$</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {cateringOptions.map((caterer) => (
+          {filteredCateringOptions.map((caterer) => (
             <Card key={caterer.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <img
                 src={caterer.image}
@@ -156,7 +212,7 @@ export function Catering() {
                   </span>
                   <span className="flex items-center gap-1">
                     <DollarSign className="w-4 h-4" />
-                    ${caterer.pricePerPerson}/person
+                    ${caterer.pricePerPerson}/person ({caterer.priceTier})
                   </span>
                 </div>
 
