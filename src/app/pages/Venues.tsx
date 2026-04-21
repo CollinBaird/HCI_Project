@@ -78,9 +78,9 @@ export function Venues() {
   const filteredVenues = venues.filter((venue) => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = !query ||
-      venue.name.toLowerCase().includes(query) ||
-      venue.location.toLowerCase().includes(query) ||
-      venue.amenities.some(amenity => amenity.toLowerCase().includes(query));
+      venue.name.toLowerCase().startsWith(query) ||
+      venue.location.toLowerCase().startsWith(query) ||
+      venue.amenities.some(amenity => amenity.toLowerCase().startsWith(query));
 
     const matchesBudget = !budgetFilter || venue.priceTier === budgetFilter;
 

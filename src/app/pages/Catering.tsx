@@ -77,9 +77,9 @@ export function Catering() {
   const filteredCateringOptions = cateringOptions.filter((caterer) => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = !query ||
-      caterer.name.toLowerCase().includes(query) ||
-      caterer.cuisine.toLowerCase().includes(query) ||
-      caterer.specialties.some(specialty => specialty.toLowerCase().includes(query));
+      caterer.name.toLowerCase().startsWith(query) ||
+      caterer.cuisine.toLowerCase().startsWith(query) ||
+      caterer.specialties.some(specialty => specialty.toLowerCase().startsWith(query));
 
     const matchesBudget = !budgetFilter || caterer.priceTier === budgetFilter;
 
