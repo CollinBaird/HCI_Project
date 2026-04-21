@@ -1,4 +1,4 @@
-export type EventType = "catering" | "corporate" | "wedding" | "conference" | "charity";
+export type EventType = "catering" | "venue" | "corporate" | "wedding" | "conference" | "charity";
 
 export type PlannedEvent = {
   id: number;
