@@ -19,9 +19,10 @@ export function Home() {
     };
   }, [refreshEvents]);
 
+  const venueBookingEvents = upcomingEvents.filter((event) => event.type !== "catering");
   const cateringOrders = upcomingEvents.filter((event) => event.type === "catering").length;
   const totalAttendees = upcomingEvents.reduce((sum, event) => sum + (event.partySize ?? 0), 0);
-  const uniqueVenues = new Set(upcomingEvents.map((event) => event.venue)).size;
+  const uniqueVenues = new Set(venueBookingEvents.map((event) => event.venue)).size;
 
   const stats = [
     { label: "Upcoming Events", value: String(upcomingEvents.length), icon: Calendar, color: "text-blue-600" },
