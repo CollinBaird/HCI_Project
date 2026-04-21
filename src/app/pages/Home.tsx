@@ -1,18 +1,33 @@
+import React from "react";
 import { Calendar, MapPin, Utensils, Users } from "lucide-react";
 import { Card } from "../components/ui/card";
+import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from "../eventStore";
 
 export function Home() {
-  const upcomingEvents = [
-    { id: 1, name: "Corporate Annual Gala", date: "April 15, 2026", attendees: 250, venue: "Grand Ballroom" },
-    { id: 2, name: "Spring Wedding", date: "May 3, 2026", attendees: 150, venue: "Garden Terrace" },
-    { id: 3, name: "Tech Conference", date: "June 10, 2026", attendees: 500, venue: "Convention Center" },
-  ];
+  const [upcomingEvents, setUpcomingEvents] = React.useState<PlannedEvent[]>([]);
+
+  const refreshEvents = React.useCallback(() => {
+    setUpcomingEvents(getStoredEvents());
+  }, []);
+
+  React.useEffect(() => {
+    refreshEvents();
+    const eventName = getEventsUpdatedEventName();
+    window.addEventListener(eventName, refreshEvents);
+    return () => {
+      window.removeEventListener(eventName, refreshEvents);
+    };
+  }, [refreshEvents]);
+
+  const cateringOrders = upcomingEvents.filter((event) => event.type === "catering").length;
+  const totalAttendees = upcomingEvents.reduce((sum, event) => sum + (event.partySize ?? 0), 0);
+  const uniqueVenues = new Set(upcomingEvents.map((event) => event.venue)).size;
 
   const stats = [
-    { label: "Upcoming Events", value: "12", icon: Calendar, color: "text-blue-600" },
-    { label: "Venues Booked", value: "8", icon: MapPin, color: "text-green-600" },
-    { label: "Catering Orders", value: "15", icon: Utensils, color: "text-orange-600" },
-    { label: "Total Attendees", value: "1,250", icon: Users, color: "text-purple-600" },
+    { label: "Upcoming Events", value: String(upcomingEvents.length), icon: Calendar, color: "text-blue-600" },
+    { label: "Venues Booked", value: String(uniqueVenues), icon: MapPin, color: "text-green-600" },
+    { label: "Catering Orders", value: String(cateringOrders), icon: Utensils, color: "text-orange-600" },
+    { label: "Total Attendees", value: String(totalAttendees), icon: Users, color: "text-purple-600" },
   ];
 
   return (
@@ -45,33 +60,40 @@ export function Home() {
         <Card className="p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Upcoming Events</h2>
           <div className="space-y-4">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <div>
-                  <h3 className="font-semibold text-gray-900">{event.name}</h3>
-                  <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {event.date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
-                      {event.venue}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {event.attendees} attendees
-                    </span>
+            {upcomingEvents.length === 0 ? (
+              <div className="p-6 border border-dashed border-gray-300 rounded-lg text-center text-gray-500">
+                No upcoming events yet.
+              </div>
+            ) : (
+              upcomingEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(event.date).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        {event.venue}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        {event.partySize ?? 0} attendees
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  View Details
-                </button>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </Card>
       </div>

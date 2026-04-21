@@ -1,12 +1,11 @@
 import React from "react";
 import { Outlet, NavLink } from "react-router";
-import { Home, MapPin, Utensils, Calendar, MessageSquare, Settings, User, Building2 } from "lucide-react";
+import { Home, Calendar, MessageSquare, Settings, User, Building2, ClipboardList } from "lucide-react";
 
 export function Layout() {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/venues", label: "Venues", icon: MapPin },
-    { path: "/catering", label: "Catering", icon: Utensils },
+    { path: "/plan-event", label: "Plan Event", icon: ClipboardList },
     { path: "/calendar", label: "Calendar", icon: Calendar },
     { path: "/messages", label: "Messages", icon: MessageSquare },
     { path: "/settings", label: "Settings", icon: Settings },
