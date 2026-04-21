@@ -1,3 +1,4 @@
+import React from "react";
 import { Calendar as CalendarIcon, Clock, MapPin } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";

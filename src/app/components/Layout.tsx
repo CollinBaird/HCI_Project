@@ -1,5 +1,6 @@
+import React from "react";
 import { Outlet, NavLink } from "react-router";
-import { Home, MapPin, Utensils, Calendar, MessageSquare, Settings, User } from "lucide-react";
+import { Home, MapPin, Utensils, Calendar, MessageSquare, Settings, User, Building2 } from "lucide-react";
 
 export function Layout() {
   const navItems = [
@@ -10,12 +11,13 @@ export function Layout() {
     { path: "/messages", label: "Messages", icon: MessageSquare },
     { path: "/settings", label: "Settings", icon: Settings },
     { path: "/profile", label: "Profile", icon: User },
+    { path: "/organization", label: "Organization", icon: Building2 },
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0d1f51] border-r border-blue-900 text-white flex flex-col">
+      <aside className="w-64 h-screen sticky top-0 bg-[#0d1f51] border-r border-blue-900 text-white flex flex-col">
         <div className="p-6 border-b border-blue-900">
           <h1 className="text-2xl font-bold text-white">UPlan</h1>
           <p className="text-sm text-blue-200 mt-1">Plan your perfect event</p>

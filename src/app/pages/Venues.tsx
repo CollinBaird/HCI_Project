@@ -1,3 +1,4 @@
+import React from "react";
 import { MapPin, Users, DollarSign, Star } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";

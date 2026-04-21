@@ -7,6 +7,7 @@ import { CalendarPage } from "./pages/CalendarPage";
 import { Messages } from "./pages/Messages";
 import { Settings } from "./pages/Settings";
 import { Profile } from "./pages/Profile";
+import { Organization } from "./pages/Organization";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: "messages", Component: Messages },
       { path: "settings", Component: Settings },
       { path: "profile", Component: Profile },
+      { path: "organization", Component: Organization },
     ],
   },
 ]);
