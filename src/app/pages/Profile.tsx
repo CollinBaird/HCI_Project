@@ -1,15 +1,16 @@
+import React from "react";
 import { User, Mail, Phone, MapPin, Calendar, Award } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 
 export function Profile() {
   const userProfile = {
-    name: "Alexandra Martinez",
-    email: "alexandra.martinez@email.com",
+    name: "Parker Savage",
+    email: "parker.savage@utexas.edu",
     phone: "+1 (555) 123-4567",
-    location: "San Francisco, CA",
-    joinDate: "January 2025",
-    membershipType: "Premium",
+    location: "Austin, TX",
+    joinDate: "January 2026",
+    membershipType: "Basic",
   };
 
   const stats = [

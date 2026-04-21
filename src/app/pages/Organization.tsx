@@ -5,9 +5,10 @@ import { Badge } from "../components/ui/badge";
 
 export function Organization() {
   const team = [
-    { name: "Alex Martinez", role: "Event Director", email: "alex@uplan.com" },
-    { name: "Jamie Carter", role: "Vendor Manager", email: "jamie@uplan.com" },
-    { name: "Riley Brooks", role: "Logistics Lead", email: "riley@uplan.com" },
+    { name: "Parker Savage", role: "Event Director", email: "parker@uplan.com" },
+    { name: "Collin Baird", role: "Vendor Manager", email: "collin@uplan.com" },
+    { name: "Victoria Rowe", role: "Logistics Lead", email: "victoria@uplan.com" },
+    { name: "Hunter Mena", role: "Operations Coordinator", email: "hunter@uplan.com" },
   ];
 
   const goals = [

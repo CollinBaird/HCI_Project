@@ -8,6 +8,8 @@ import { Messages } from "./pages/Messages";
 import { Settings } from "./pages/Settings";
 import { Profile } from "./pages/Profile";
 import { Organization } from "./pages/Organization";
+import { PlanEvent } from "./pages/PlanEvent";
+import { PlanEventCombined } from "./pages/PlanEventCombined";
 
 export const router = createBrowserRouter([
   {
@@ -17,6 +19,8 @@ export const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "venues", Component: Venues },
       { path: "catering", Component: Catering },
+      { path: "plan-event", Component: PlanEvent },
+      { path: "plan-event/combined", Component: PlanEventCombined },
       { path: "calendar", Component: CalendarPage },
       { path: "messages", Component: Messages },
       { path: "settings", Component: Settings },
