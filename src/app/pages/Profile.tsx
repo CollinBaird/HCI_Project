@@ -1,7 +1,8 @@
 import React from "react";
-import { User, Mail, Phone, MapPin, Calendar, Award } from "lucide-react";
+import { User, Mail, Phone, MapPin, Calendar } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from "../eventStore";
 
 export function Profile() {
   const userProfile = {
@@ -13,39 +14,44 @@ export function Profile() {
     membershipType: "Basic",
   };
 
+  const [events, setEvents] = React.useState<PlannedEvent[]>([]);
+
+  const refreshEvents = React.useCallback(() => {
+    setEvents(getStoredEvents());
+  }, []);
+
+  React.useEffect(() => {
+    refreshEvents();
+    const eventName = getEventsUpdatedEventName();
+    window.addEventListener(eventName, refreshEvents);
+    return () => {
+      window.removeEventListener(eventName, refreshEvents);
+    };
+  }, [refreshEvents]);
+
+  const venueBookingEvents = events.filter((event) => event.type !== "catering");
+  const totalAttendees = events.reduce((sum, event) => sum + (event.partySize ?? 0), 0);
+  const bookedVenuesCount = new Set(venueBookingEvents.map((event) => event.venue)).size;
+
   const stats = [
-    { label: "Events Planned", value: "24", icon: Calendar },
-    { label: "Venues Booked", value: "18", icon: MapPin },
-    { label: "Total Attendees", value: "3,420", icon: User },
-    { label: "Success Rate", value: "98%", icon: Award },
+    { label: "Events Planned", value: String(events.length), icon: Calendar },
+    { label: "Venues Booked", value: String(bookedVenuesCount), icon: MapPin },
+    { label: "Total Attendees", value: String(totalAttendees), icon: User },
   ];
 
-  const recentActivity = [
-    {
-      id: 1,
-      action: "Booked venue",
-      details: "Grand Ballroom for Corporate Gala",
-      date: "Mar 25, 2026",
-    },
-    {
-      id: 2,
-      action: "Updated catering",
-      details: "Changed menu for Spring Wedding",
-      date: "Mar 23, 2026",
-    },
-    {
-      id: 3,
-      action: "Sent message",
-      details: "To Convention Center Team",
-      date: "Mar 20, 2026",
-    },
-    {
-      id: 4,
-      action: "Created event",
-      details: "Tech Conference 2026",
-      date: "Mar 18, 2026",
-    },
-  ];
+  const recentActivity = [...events]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 6)
+    .map((event) => ({
+      id: event.id,
+      action: event.type === "catering" ? "Booked catering" : "Booked event",
+      details: `${event.title} at ${event.venue}`,
+      date: new Date(event.date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+    }));
 
   return (
     <div className="p-8">
@@ -95,7 +101,7 @@ export function Profile() {
           {/* Stats and Activity */}
           <div className="lg:col-span-2 space-y-6">
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {stats.map((stat) => {
                 const Icon = stat.icon;
                 return (
@@ -116,47 +122,24 @@ export function Profile() {
             <Card className="p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
               <div className="space-y-4">
-                {recentActivity.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-start justify-between py-3 border-b border-gray-100 last:border-0"
-                  >
-                    <div>
-                      <h3 className="font-medium text-gray-900">{activity.action}</h3>
-                      <p className="text-sm text-gray-600">{activity.details}</p>
+                {recentActivity.length === 0 ? (
+                  <p className="text-sm text-gray-500">No activity yet.</p>
+                ) : (
+                  recentActivity.map((activity) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-start justify-between py-3 border-b border-gray-100 last:border-0"
+                    >
+                      <div>
+                        <h3 className="font-medium text-gray-900">{activity.action}</h3>
+                        <p className="text-sm text-gray-600">{activity.details}</p>
+                      </div>
+                      <span className="text-sm text-gray-500 whitespace-nowrap ml-4">
+                        {activity.date}
+                      </span>
                     </div>
-                    <span className="text-sm text-gray-500 whitespace-nowrap ml-4">
-                      {activity.date}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Achievements */}
-            <Card className="p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Achievements</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                  <Award className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-gray-900">Event Master</h3>
-                  <p className="text-xs text-gray-600">Planned 20+ events</p>
-                </div>
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <Award className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-gray-900">Early Adopter</h3>
-                  <p className="text-xs text-gray-600">Joined in 2025</p>
-                </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <Award className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-gray-900">Venue Explorer</h3>
-                  <p className="text-xs text-gray-600">Visited 15+ venues</p>
-                </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <Award className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-gray-900">Networking Pro</h3>
-                  <p className="text-xs text-gray-600">500+ messages sent</p>
-                </div>
+                  ))
+                )}
               </div>
             </Card>
           </div>
