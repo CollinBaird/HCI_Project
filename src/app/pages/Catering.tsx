@@ -8,6 +8,7 @@ import { addStoredEvent } from "../eventStore";
 
 export function Catering() {
   const navigate = useNavigate();
+  const formSectionRef = React.useRef<HTMLDivElement | null>(null);
   const [selectedCatererId, setSelectedCatererId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [eventTime, setEventTime] = useState("");
@@ -63,6 +64,18 @@ export function Catering() {
   ];
 
   const selectedCaterer = cateringOptions.find((caterer) => caterer.id === selectedCatererId);
+
+  const handleSelectCaterer = (catererId: number) => {
+    if (selectedCatererId === catererId) {
+      setSelectedCatererId(null);
+      return;
+    }
+
+    setSelectedCatererId(catererId);
+    window.setTimeout(() => {
+      formSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  };
 
   const handleConfirm = () => {
     if (!selectedCaterer || !selectedDate || !eventTime || !partySize || !location || !organizationName) {
@@ -146,14 +159,14 @@ export function Catering() {
                 </div>
 
                 <button
-                  onClick={() => setSelectedCatererId(caterer.id)}
+                  onClick={() => handleSelectCaterer(caterer.id)}
                   className={`w-full px-4 py-2 rounded-lg transition-colors ${
                     selectedCatererId === caterer.id
-                      ? "bg-blue-700 text-white"
+                      ? "bg-red-100 text-red-700 hover:bg-red-200"
                       : "bg-blue-600 text-white hover:bg-blue-700"
                   }`}
                 >
-                  {selectedCatererId === caterer.id ? "Selected" : "Select Catering"}
+                  {selectedCatererId === caterer.id ? "Change" : "Select Catering"}
                 </button>
               </div>
             </Card>
@@ -161,7 +174,8 @@ export function Catering() {
         </div>
 
         {selectedCaterer && (
-          <Card className="mt-8 p-6 border-2 border-blue-200">
+          <div ref={formSectionRef}>
+            <Card className="mt-8 p-6 border-2 border-blue-200">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Catering Request Form</h2>
             <p className="text-gray-600 mb-6">
               Selected Caterer: <span className="font-semibold">{selectedCaterer.name}</span>
@@ -246,7 +260,8 @@ export function Catering() {
             >
               Confirm
             </button>
-          </Card>
+            </Card>
+          </div>
         )}
       </div>
     </div>
