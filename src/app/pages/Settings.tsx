@@ -1,4 +1,4 @@
-import { Eye, BellRing, Database, Palette, Accessibility, Shield } from "lucide-react";
+import { BellRing, Palette, Shield } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Switch } from "../components/ui/switch";
 
@@ -76,7 +76,6 @@ export function Settings() {
               </section>
             );
           })}
-
         </div>
       </div>
     </div>
