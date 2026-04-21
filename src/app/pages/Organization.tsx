@@ -1,7 +1,6 @@
 import React from "react";
-import { Building2, Users, Target, CalendarCheck, Mail, Phone } from "lucide-react";
+import { Building2, Users, Target, Mail, Phone } from "lucide-react";
 import { Card } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
 
 export function Organization() {
   const team = [
@@ -15,12 +14,6 @@ export function Organization() {
     "Deliver high-quality event experiences with predictable budgets.",
     "Reduce planning turnaround time with reusable templates.",
     "Improve vendor communication and response tracking.",
-  ];
-
-  const upcomingMilestones = [
-    { title: "Spring Showcase Final Run", date: "Apr 8, 2026", status: "In Progress" },
-    { title: "Summer Expo Vendor Lock", date: "Apr 20, 2026", status: "Upcoming" },
-    { title: "Corporate Gala Logistics Review", date: "May 2, 2026", status: "Planned" },
   ];
 
   return (
@@ -87,24 +80,6 @@ export function Organization() {
           </Card>
 
           <Card className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <CalendarCheck className="w-5 h-5 text-blue-600" />
-              <h2 className="text-xl font-bold text-gray-900">Upcoming Milestones</h2>
-            </div>
-            <div className="space-y-4">
-              {upcomingMilestones.map((item) => (
-                <div key={item.title} className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{item.title}</h3>
-                    <p className="text-sm text-gray-600">{item.date}</p>
-                  </div>
-                  <Badge variant="outline">{item.status}</Badge>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Contact</h2>
             <div className="space-y-3 text-sm text-gray-700">
               <div className="flex items-center gap-2">
@@ -113,7 +88,7 @@ export function Organization() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-blue-600" />
-                <span>+1 (555) 210-8891</span>
+                <span>+1 (676) 676-7676</span>
               </div>
               <p className="pt-2 text-gray-600">
                 Office hours: Monday-Friday, 9:00 AM to 5:00 PM.
