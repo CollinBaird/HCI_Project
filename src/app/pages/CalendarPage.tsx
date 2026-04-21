@@ -58,6 +58,7 @@ export function CalendarPage() {
   const getTypeColor = (type: string) => {
     const colors = {
       catering: "bg-orange-100 text-orange-800",
+      venue: "bg-blue-100 text-blue-800",
       corporate: "bg-blue-100 text-blue-800",
       wedding: "bg-pink-100 text-pink-800",
       conference: "bg-purple-100 text-purple-800",

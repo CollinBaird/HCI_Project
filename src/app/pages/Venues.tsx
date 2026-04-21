@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import { MapPin, Users, DollarSign, Star } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { Calendar } from "../components/ui/calendar";
+import { addStoredEvent } from "../eventStore";
 
 export function Venues() {
+  const navigate = useNavigate();
+  const formSectionRef = React.useRef<HTMLDivElement | null>(null);
+  const [selectedVenueId, setSelectedVenueId] = useState<number | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [eventTime, setEventTime] = useState("");
+  const [partySize, setPartySize] = useState("");
+  const [location, setLocation] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
+
   const venues = [
     {
       id: 1,
@@ -51,6 +63,43 @@ export function Venues() {
       available: true,
     },
   ];
+
+  const selectedVenue = venues.find((venue) => venue.id === selectedVenueId);
+
+  const handleSelectVenue = (venueId: number) => {
+    if (selectedVenueId === venueId) {
+      setSelectedVenueId(null);
+      return;
+    }
+
+    const venue = venues.find((item) => item.id === venueId);
+    if (venue) {
+      setLocation(venue.location);
+    }
+    setSelectedVenueId(venueId);
+    window.setTimeout(() => {
+      formSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  };
+
+  const handleConfirm = () => {
+    if (!selectedVenue || !selectedDate || !eventTime || !partySize || !location || !organizationName) {
+      return;
+    }
+
+    addStoredEvent({
+      title: `${organizationName} Venue Booking`,
+      date: selectedDate.toISOString().split("T")[0],
+      time: eventTime,
+      venue: selectedVenue.name,
+      status: "confirmed",
+      type: "venue",
+      partySize: Number(partySize),
+      organizationName,
+    });
+
+    navigate("/calendar");
+  };
 
   return (
     <div className="p-8">
@@ -106,15 +155,114 @@ export function Venues() {
                 </div>
 
                 <button
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  onClick={() => handleSelectVenue(venue.id)}
+                  className={`w-full px-4 py-2 rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed ${
+                    selectedVenueId === venue.id
+                      ? "bg-red-100 text-red-700 hover:bg-red-200"
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
                   disabled={!venue.available}
                 >
-                  {venue.available ? "Book Venue" : "Not Available"}
+                  {venue.available
+                    ? selectedVenueId === venue.id
+                      ? "Change"
+                      : "Select Venue"
+                    : "Not Available"}
                 </button>
               </div>
             </Card>
           ))}
         </div>
+        {selectedVenue && (
+          <div ref={formSectionRef}>
+            <Card className="mt-8 p-6 border-2 border-blue-200">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Venue Booking Form</h2>
+              <p className="text-gray-600 mb-6">
+                Selected Venue: <span className="font-semibold">{selectedVenue.name}</span>
+              </p>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm font-semibold text-gray-700 mb-2">Select Date</p>
+                  <div className="border border-gray-200 rounded-lg inline-block">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      className="rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="venue-event-time">
+                      Time of Day
+                    </label>
+                    <input
+                      id="venue-event-time"
+                      type="time"
+                      value={eventTime}
+                      onChange={(event) => setEventTime(event.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="venue-party-size">
+                      Party Size
+                    </label>
+                    <input
+                      id="venue-party-size"
+                      type="number"
+                      min="1"
+                      value={partySize}
+                      onChange={(event) => setPartySize(event.target.value)}
+                      placeholder="Enter number of guests"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="venue-location">
+                      Location
+                    </label>
+                    <input
+                      id="venue-location"
+                      type="text"
+                      value={location}
+                      onChange={(event) => setLocation(event.target.value)}
+                      placeholder="Enter event location"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="venue-organization-name">
+                      Organization Name
+                    </label>
+                    <input
+                      id="venue-organization-name"
+                      type="text"
+                      value={organizationName}
+                      onChange={(event) => setOrganizationName(event.target.value)}
+                      placeholder="Enter organization name"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleConfirm}
+                disabled={!selectedDate || !eventTime || !partySize || !location || !organizationName}
+                className="mt-8 w-full px-6 py-4 text-lg font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-green-300 disabled:cursor-not-allowed"
+              >
+                Confirm
+              </button>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
