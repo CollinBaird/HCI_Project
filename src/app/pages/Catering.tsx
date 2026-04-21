@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { Utensils, Users, DollarSign, ChefHat } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Calendar } from "../components/ui/calendar";
-import { addStoredEvent } from "../eventStore";
+import { addStoredEvent, updateCombinedPlanDraft } from "../eventStore";
 
 export function Catering() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const formSectionRef = React.useRef<HTMLDivElement | null>(null);
   const [selectedCatererId, setSelectedCatererId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -64,8 +65,21 @@ export function Catering() {
   ];
 
   const selectedCaterer = cateringOptions.find((caterer) => caterer.id === selectedCatererId);
+  const selectOnly = searchParams.get("selectOnly") === "1";
+  const returnTo = searchParams.get("returnTo") || "/plan-event/combined";
 
   const handleSelectCaterer = (catererId: number) => {
+    const caterer = cateringOptions.find((item) => item.id === catererId);
+    if (!caterer) {
+      return;
+    }
+
+    if (selectOnly) {
+      updateCombinedPlanDraft({ catererName: caterer.name });
+      navigate(returnTo);
+      return;
+    }
+
     if (selectedCatererId === catererId) {
       setSelectedCatererId(null);
       return;
@@ -166,7 +180,7 @@ export function Catering() {
                       : "bg-blue-600 text-white hover:bg-blue-700"
                   }`}
                 >
-                  {selectedCatererId === caterer.id ? "Change" : "Select Catering"}
+                  {selectOnly ? "Select Catering" : selectedCatererId === caterer.id ? "Change" : "Select Catering"}
                 </button>
               </div>
             </Card>
