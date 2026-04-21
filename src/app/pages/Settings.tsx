@@ -32,15 +32,6 @@ export function Settings() {
         { label: "Incognito Mode", description: "Prevent session data from being saved to history", enabled: false },
       ],
     },
-    {
-      title: "User Agency & Data",
-      description: "You own your data. Control how it is stored and archived.",
-      icon: Database,
-      settings: [
-        { label: "Local-Only Storage", description: "Do not sync data to the cloud (Privacy mode)", enabled: false },
-        { label: "Auto-Archive", description: "Move old entries to local storage after 30 days", enabled: true },
-      ],
-    },
   ];
 
   return (
@@ -86,20 +77,6 @@ export function Settings() {
             );
           })}
 
-          {/* HCI Specific Section: Data Portability over "Danger Zone" */}
-          <div className="mt-12 pt-8 border-t border-slate-200">
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 italic">User Data Agency</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button className="flex flex-col items-start p-4 border border-slate-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all group bg-white">
-                <span className="font-semibold text-slate-900 group-hover:text-blue-700">Download Data (.json)</span>
-                <span className="text-xs text-slate-500 text-left">Export your configuration to use in another instance.</span>
-              </button>
-              <button className="flex flex-col items-start p-4 border border-slate-200 rounded-xl hover:border-red-300 hover:bg-red-50 transition-all group bg-white">
-                <span className="font-semibold text-slate-900 group-hover:text-red-700">Clear Local Cache</span>
-                <span className="text-xs text-slate-500 text-left">Reset UI state without affecting your stored data.</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
