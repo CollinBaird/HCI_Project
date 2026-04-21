@@ -67,6 +67,19 @@ export function CalendarPage() {
     return colors[type as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
+  const formatTime = (time: string) => {
+    const match = time.match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) {
+      return time;
+    }
+
+    const hours24 = Number(match[1]);
+    const minutes = match[2];
+    const period = hours24 >= 12 ? "PM" : "AM";
+    const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+    return `${hours12}:${minutes} ${period}`;
+  };
+
   const now = new Date();
   const thisMonthEvents = events.filter((event) => {
     const eventDate = new Date(event.date);
@@ -116,7 +129,7 @@ export function CalendarPage() {
                       <div className="space-y-1 text-sm text-gray-600">
                         <p className="flex items-center gap-2">
                           <Clock className="w-4 h-4" />
-                          {event.time}
+                          {formatTime(event.time)}
                         </p>
                         <p className="flex items-center gap-2">
                           <MapPin className="w-4 h-4" />
@@ -197,7 +210,7 @@ export function CalendarPage() {
             <div className="space-y-2 text-sm text-gray-700 mb-2">
               <p><span className="font-semibold">Title:</span> {selectedEvent.title}</p>
               <p><span className="font-semibold">Date:</span> {selectedEvent.date}</p>
-              <p><span className="font-semibold">Time:</span> {selectedEvent.time}</p>
+              <p><span className="font-semibold">Time:</span> {formatTime(selectedEvent.time)}</p>
               <p><span className="font-semibold">Location:</span> {selectedEvent.venue}</p>
               {selectedEvent.organizationName && (
                 <p><span className="font-semibold">Organization:</span> {selectedEvent.organizationName}</p>
