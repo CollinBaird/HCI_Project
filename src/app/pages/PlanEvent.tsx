@@ -5,7 +5,11 @@ import { Utensils, MapPin, Layers } from "lucide-react";
 
 export function PlanEvent() {
   const navigate = useNavigate();
-
+//This section is used to display the options for the user to choose from
+//The options are:
+// - Catering
+// - Venue
+// - Catering + Venue
   const options = [
     {
       title: "Catering",
