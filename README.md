@@ -1,14 +1,13 @@
-
 # UPlan
 
-UPlan is a React + Vite event planning dashboard prototype with pages for venues, catering, calendar planning, messaging, profile management, settings, and organization details.
+UPlan is a React + Vite event planning dashboard prototype. It supports venue and catering planning flows, a combined planning flow, calendar management (including cancel actions), profile updates, and local message threads.
 
-## Running the project locally
+## Run locally
 
 ### Prerequisites
 
 - Node.js 18+ (Node.js 20 LTS recommended)
-- npm (comes with Node.js)
+- npm (included with Node.js)
 
 ### Install dependencies
 
@@ -16,13 +15,13 @@ UPlan is a React + Vite event planning dashboard prototype with pages for venues
 npm install
 ```
 
-### Start the development server
+### Start development server
 
 ```bash
 npm run dev
 ```
 
-Then open the local URL shown in terminal (typically `http://localhost:5173`).
+Open the local URL shown in terminal (usually `http://localhost:5173`).
 
 ### Build for production
 
@@ -30,56 +29,60 @@ Then open the local URL shown in terminal (typically `http://localhost:5173`).
 npm run build
 ```
 
-This outputs an optimized build in the `dist/` folder.
+## Tech stack
 
-## Core frameworks and libraries used
+- **React 18** + **TypeScript/TSX**
+- **Vite**
+- **React Router**
+- **Tailwind CSS**
+- **Radix UI primitives** (through components in `src/app/components/ui`)
+- **Lucide React** icons
 
-- **React 18**: main UI framework for building component-based pages.
-- **TypeScript + TSX**: typed JavaScript and component markup in `.tsx` files.
-- **Vite**: fast dev server and production build tool.
-- **React Router**: client-side routing between pages.
-- **Tailwind CSS (v4)**: utility-first styling across the app.
-- **Radix UI + custom UI wrappers**: reusable accessible UI primitives in `src/app/components/ui`.
-- **Lucide React**: icon system used throughout the interface.
+## Data/storage model
 
-## Pages directory overview (`src/app/pages`)
+This project is currently frontend-only and stores app data in browser `localStorage`:
 
-- **`Home.tsx`**: dashboard landing page with key stats and a list of upcoming events.
-- **`Venues.tsx`**: venue browsing cards with pricing, capacity, amenities, and booking button states.
-- **`Catering.tsx`**: catering vendor list with cuisine, pricing, specialties, and dietary options.
-- **`CalendarPage.tsx`**: event schedule view with status badges, event types, and quick actions.
-- **`Messages.tsx`**: two-pane messaging UI with conversation list and message thread preview.
-- **`Settings.tsx`**: account preference panels (notifications, privacy/security, billing, account actions).
-- **`Profile.tsx`**: user profile details, planning stats, recent activity, and achievements.
-- **`Organization.tsx`**: organization information page with team details, goals, milestones, and contact info.
+- planned events
+- combined planning draft state
+- conversations/messages
 
-## Project structure overview
+Core storage logic is in `src/app/eventStore.ts`.
 
-### Top-level folders/files
+## Pages overview (`src/app/pages`)
 
-- **`src/`**: all frontend source code.
-- **`public/`**: static assets served as-is (example: `public/images/beta.png`).
-- **`guidelines/`**: project/reference guideline docs.
-- **`index.html`**: Vite HTML entry file that mounts the React app.
-- **`package.json`**: scripts and dependency definitions.
-- **`package-lock.json`**: exact npm dependency lockfile.
+- **`Home.tsx`**: dashboard stats and upcoming events list; includes cancel-with-confirmation from home.
+- **`PlanEvent.tsx`**: entry page for planning paths (`Catering`, `Venue`, `Catering + Venue`).
+- **`Catering.tsx`**: select caterer, fill booking form (date/time/size/location/org), confirm to create event.
+- **`Venues.tsx`**: select venue, fill booking form (date/time/size/location/org), confirm to create event.
+- **`PlanEventCombined.tsx`**: combined flow that routes out to pick venue/catering, returns with placeholders, then completes booking.
+- **`CalendarPage.tsx`**: shows events, AM/PM time display, view-details modal, and cancel event action.
+- **`Messages.tsx`**: conversation list and message thread UI.
+- **`Profile.tsx`**: profile info, edit-profile modal, live stats/activity based on stored events.
+- **`Organization.tsx`**: organization/team, goals, and contact information.
+- **`Settings.tsx`**: account preference/settings UI.
+
+## Current directory structure
+
+### Top-level
+
+- **`src/`**: application source code.
+- **`public/`**: static assets served directly (for example `public/images/beta.png`).
+- **`index.html`**: HTML entrypoint.
+- **`package.json`**: scripts and dependency manifest.
+- **`package-lock.json`**: npm-generated lockfile for reproducible installs.
 - **`vite.config.ts`**: Vite configuration.
-- **`postcss.config.mjs`**: PostCSS/Tailwind processing config.
+- **`postcss.config.mjs`**: PostCSS configuration.
 
-### `src/` breakdown
+### `src/`
 
-- **`src/main.tsx`**: app bootstrap; mounts React into `#root`.
-- **`src/app/App.tsx`**: top-level app component rendering the router provider.
-- **`src/app/routes.ts`**: route definitions and page-to-path mapping.
-- **`src/app/components/`**: shared layout and reusable components.
-  - **`Layout.tsx`**: main shell with left sidebar navigation and routed content outlet.
-  - **`figma/ImageWithFallback.tsx`**: image component that renders a fallback when an image fails to load.
-  - **`ui/`**: reusable UI components used across pages (cards, badges, switches, dialogs, etc.).
-- **`src/app/pages/`**: route-level page components (one file per main screen).
-- **`src/styles/`**: global styling and Tailwind/theme CSS files.
-
-## Notes
-
-- The app is currently frontend-only (no backend/database integration yet).
-- Most page content is currently mock data defined directly in page components.
+- **`src/main.tsx`**: React root mount.
+- **`src/app/App.tsx`**: router provider wrapper.
+- **`src/app/routes.ts`**: route registration.
+- **`src/app/eventStore.ts`**: localStorage-backed event/message data helpers.
+- **`src/app/components/`**
+  - **`Layout.tsx`**: app shell and sidebar navigation.
+  - **`figma/ImageWithFallback.tsx`**: image fallback helper.
+  - **`ui/`**: reusable UI primitives/components.
+- **`src/app/pages/`**: route-level pages.
+- **`src/styles/`**: global styling (`index.css`, `tailwind.css`, `theme.css`, `fonts.css`).
   
