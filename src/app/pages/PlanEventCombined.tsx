@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Calendar } from "../components/ui/calendar";
+import { TimePicker15 } from "../components/TimePicker15";
 import {
   addStoredEvent,
   addBookingConversation,
@@ -164,13 +165,8 @@ export function PlanEventCombined() {
                 <label htmlFor="combined-time" className="block text-sm font-semibold text-gray-700 mb-2">
                   Time of Day
                 </label>
-                <input
-                  id="combined-time"
-                  type="time"
-                  value={eventTime}
-                  onChange={(event) => setEventTime(event.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                {/* Time increments are 15 minutes in order to simplify booking process */}
+                <TimePicker15 value={eventTime} onChange={setEventTime} />
               </div>
               <div>
                 <label htmlFor="combined-party-size" className="block text-sm font-semibold text-gray-700 mb-2">

@@ -4,6 +4,7 @@ import { Utensils, Users, DollarSign, ChefHat, Search, ArrowLeft } from "lucide-
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Calendar } from "../components/ui/calendar";
+import { TimePicker15 } from "../components/TimePicker15";
 import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from "../eventStore";
 
 export function Catering() {
@@ -279,13 +280,8 @@ export function Catering() {
                   <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="event-time">
                     Time of Day
                   </label>
-                  <input
-                    id="event-time"
-                    type="time"
-                    value={eventTime}
-                    onChange={(event) => setEventTime(event.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  {/* Time increments are 15 minutes in order to simplify booking process */}
+                  <TimePicker15 value={eventTime} onChange={setEventTime} />
                 </div>
 
                 <div>

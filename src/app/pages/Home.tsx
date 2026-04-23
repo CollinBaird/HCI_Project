@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { Calendar, MapPin, Utensils, Users, X } from "lucide-react";
 import { Card } from "../components/ui/card";
+import { TimePicker15 } from "../components/TimePicker15";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -205,11 +206,10 @@ export function Home() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                <input
-                  type="time"
+                {/* Time increments are 15 minutes in order to simplify booking process */}
+                <TimePicker15
                   value={editForm.time}
-                  onChange={(e) => setEditForm({ ...editForm, time: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(time) => setEditForm({ ...editForm, time })}
                 />
               </div>
               <div>
