@@ -81,8 +81,17 @@ Core storage logic is in `src/app/eventStore.ts`.
 - **`src/app/eventStore.ts`**: localStorage-backed event/message data helpers.
 - **`src/app/components/`**
   - **`Layout.tsx`**: app shell and sidebar navigation.
+  - **`TimePicker15.tsx`**: reusable custom time picker that enforces 15-minute increments (`00`, `15`, `30`, `45`) and AM/PM selection while storing values as `HH:MM`.
   - **`figma/ImageWithFallback.tsx`**: image fallback helper.
   - **`ui/`**: reusable UI primitives/components.
 - **`src/app/pages/`**: route-level pages.
 - **`src/styles/`**: global styling (`index.css`, `tailwind.css`, `theme.css`, `fonts.css`).
+
+## Time picker behavior
+
+`src/app/components/TimePicker15.tsx` is used in booking/edit forms to keep time input consistent.
+
+- Limits minute choices to `00`, `15`, `30`, and `45`.
+- Uses a 12-hour UI (`hour`, `minute`, `AM/PM`) for easier user input.
+- Converts selection to 24-hour `HH:MM` string format for storage in event data.
   
