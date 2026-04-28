@@ -4,6 +4,8 @@ import { Calendar as CalendarIcon, Clock, MapPin } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../components/ui/dialog";
+
+    // Why we built this page: Centralize scheduled events so users can review, edit, and manage bookings.
 import {
   getEventsUpdatedEventName,
   getStoredEvents,
@@ -30,7 +32,7 @@ export function CalendarPage() {
     refreshEvents();
     const eventName = getEventsUpdatedEventName();
     window.addEventListener(eventName, refreshEvents);
-    return () => {
+  return () => {
       window.removeEventListener(eventName, refreshEvents);
     };
   }, [refreshEvents]);

@@ -8,6 +8,8 @@ import { Calendar } from "../components/ui/calendar";
 import { TimePicker15 } from "../components/TimePicker15";
 import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from "../eventStore";
 
+  // Why we built this page: Make venue discovery and booking structured, fast, and consistent.
+
 export function Venues() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -145,7 +147,6 @@ export function Venues() {
 
     navigate("/calendar");
   };
-
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto">

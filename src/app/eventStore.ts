@@ -39,6 +39,7 @@ export type PlannedEvent = {
   catererName?: string;
 };
 
+// LocalStorage keys and custom browser events used to keep pages in sync.
 const STORAGE_KEY = "uplan_events";
 const EVENTS_UPDATED = "uplan-events-updated";
 const COMBINED_DRAFT_KEY = "uplan_combined_plan_draft";
@@ -50,6 +51,8 @@ export type CombinedPlanDraft = {
   catererName: string;
 };
 
+// Event storage helpers -------------------------------------------------------
+// These functions read/write booked events and notify listeners after updates.
 export function getStoredEvents(): PlannedEvent[] {
   if (typeof window === "undefined") {
     return [];
@@ -95,6 +98,8 @@ export function getEventsUpdatedEventName() {
   return EVENTS_UPDATED;
 }
 
+// Combined flow draft helpers -------------------------------------------------
+// We keep "in-progress" combined selections here while users move between pages.
 export function getCombinedPlanDraft(): CombinedPlanDraft {
   if (typeof window === "undefined") {
     return { venueName: "", venueLocation: "", catererName: "" };
@@ -140,6 +145,8 @@ export function getCombinedDraftUpdatedEventName() {
   return COMBINED_DRAFT_UPDATED;
 }
 
+// Conversation/message storage helpers ----------------------------------------
+// Conversation threads are also local-first and update live via events.
 const CONVERSATIONS_KEY = "uplan_conversations";
 const CONVERSATIONS_UPDATED = "uplan-conversations-updated";
 
@@ -170,6 +177,7 @@ export function addBookingConversation(params: {
   partySize: number;
   type: "venue" | "catering" | "combined";
 }) {
+  // Create a friendly first message so the conversation is not empty after booking.
   const { bookingId, vendorName, organizationName, date, time, partySize, type } = params;
   const formattedDate = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
     weekday: "long",
@@ -214,6 +222,7 @@ export function addBookingConversation(params: {
 }
 
 export function addMessageToConversation(conversationId: number, content: string) {
+  // Append a user message and update preview metadata (last message + timestamp).
   const current = getStoredConversations();
   const timeStr = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 
@@ -233,6 +242,7 @@ export function addMessageToConversation(conversationId: number, content: string
 }
 
 export function markConversationRead(conversationId: number) {
+  // Used when a thread is opened so unread badges clear immediately.
   const current = getStoredConversations();
   const updated = current.map((conv) =>
     conv.id === conversationId ? { ...conv, unread: 0 } : conv

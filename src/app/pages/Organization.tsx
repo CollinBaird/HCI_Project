@@ -1,6 +1,8 @@
 import React from "react";
 import { Building2, Users, Target, Mail, Phone } from "lucide-react";
 import { Card } from "../components/ui/card";
+
+  // Why we built this page: Show team context and contact information for coordination and visibility.
 import {
   PieChart,
   Pie,
@@ -57,7 +59,6 @@ export function Organization() {
   ];
 
   const COLORS = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b"];
-
   return (
     <div className="p-8">
       <div className="max-w-6xl mx-auto">
