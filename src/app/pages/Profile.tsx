@@ -4,9 +4,13 @@ import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../components/ui/dialog";
 import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from "../eventStore";
-
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router";
 
 export function Profile() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
   const [userProfile, setUserProfile] = React.useState({
     name: "Parker Savage",
     email: "parker.savage@utexas.edu",
@@ -30,7 +34,7 @@ export function Profile() {
     refreshEvents();
     const eventName = getEventsUpdatedEventName();
     window.addEventListener(eventName, refreshEvents);
-  return () => {
+    return () => {
       window.removeEventListener(eventName, refreshEvents);
     };
   }, [refreshEvents]);
@@ -76,6 +80,11 @@ export function Profile() {
     setIsEditOpen(false);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <div className="p-8">
       <div className="max-w-5xl mx-auto">
@@ -119,6 +128,14 @@ export function Profile() {
                   className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Edit Profile
+                </button>
+
+                {/* Logout button */}
+                <button
+                  onClick={handleLogout}
+                  className="w-full mt-3 px-4 py-2 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                >
+                  Log Out
                 </button>
               </div>
             </Card>
