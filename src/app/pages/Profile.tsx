@@ -5,7 +5,6 @@ import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../components/ui/dialog";
 import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from "../eventStore";
 
-    // Why we built this page: Give users a personal hub for identity, activity history, and planning metrics.
 
 export function Profile() {
   const [userProfile, setUserProfile] = React.useState({
