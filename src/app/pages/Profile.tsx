@@ -4,11 +4,9 @@ import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../components/ui/dialog";
 import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from "../eventStore";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 
 export function Profile() {
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const [userProfile, setUserProfile] = React.useState({
@@ -81,8 +79,8 @@ export function Profile() {
   };
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    // No auth provider is wired yet, so this acts as a local sign-out placeholder.
+    navigate("/");
   };
 
   return (
