@@ -4,13 +4,13 @@ import { Home, Calendar, MessageSquare, Settings, User, Building2, ClipboardList
 
 export function Layout() {
   const navItems = [
-    { path: "/", label: "Home", icon: Home },
-    { path: "/plan-event", label: "Plan Event", icon: ClipboardList },
-    { path: "/calendar", label: "Calendar", icon: Calendar },
-    { path: "/messages", label: "Messages", icon: MessageSquare },
-    { path: "/settings", label: "Settings", icon: Settings },
-    { path: "/profile", label: "Profile", icon: User },
-    { path: "/organization", label: "Organization", icon: Building2 },
+    { path: "/home", label: "Home", icon: Home },
+    { path: "/home/plan-event", label: "Plan Event", icon: ClipboardList },
+    { path: "/home/calendar", label: "Calendar", icon: Calendar },
+    { path: "/home/messages", label: "Messages", icon: MessageSquare },
+    { path: "/home/settings", label: "Settings", icon: Settings },
+    { path: "/home/profile", label: "Profile", icon: User },
+    { path: "/home/organization", label: "Organization", icon: Building2 },
   ];
 
   return (
@@ -29,7 +29,7 @@ export function Layout() {
               <NavLink
                 key={item.path}
                 to={item.path}
-                end={item.path === "/"}
+                end={item.path === "/home"}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive
