@@ -1,8 +1,12 @@
+import React from "react";
 import { BellRing, Palette, Shield } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Switch } from "../components/ui/switch";
 
+  // Why we built this page: Let users control account preferences and platform behavior from one place.
+
 export function Settings() {
+  // This page groups account preferences into sections for easier management.
   const settingsSections = [
     {
       title: "Interface & Visuals",
@@ -33,7 +37,6 @@ export function Settings() {
       ],
     },
   ];
-
   return (
     <div className="p-8 bg-slate-50 min-h-screen">
       <div className="max-w-3xl mx-auto">

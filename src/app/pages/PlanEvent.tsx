@@ -3,7 +3,10 @@ import { useNavigate } from "react-router";
 import { Card } from "../components/ui/card";
 import { Utensils, MapPin, Layers } from "lucide-react";
 
+  // Why we built this page: Give users a simple starting point to choose how they want to book services.
+
 export function PlanEvent() {
+  // This page is the planning entry point and routes users to the booking flow they need.
   const navigate = useNavigate();
 //This section is used to display the options for the user to choose from
 //The options are:
@@ -33,7 +36,6 @@ export function PlanEvent() {
       onClick: () => navigate("/plan-event/combined"),
     },
   ];
-
   return (
     <div className="p-8">
       <div className="max-w-6xl mx-auto">

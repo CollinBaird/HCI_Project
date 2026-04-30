@@ -3,6 +3,8 @@ import { useNavigate } from "react-router";
 import { Calendar, MapPin, Utensils, Users, X } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { TimePicker15 } from "../components/TimePicker15";
+
+    // Why we built this page: Provide a quick dashboard so users can immediately see event status and take action.
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +25,7 @@ import {
 } from "../eventStore";
 
 export function Home() {
+  // This page summarizes current bookings and gives quick actions for edits/cancellations.
   const [upcomingEvents, setUpcomingEvents] = React.useState<PlannedEvent[]>([]);
   const [editingEvent, setEditingEvent] = React.useState<PlannedEvent | null>(null);
   const [editForm, setEditForm] = React.useState({ title: "", date: "", time: "", venue: "", partySize: "" });
@@ -36,7 +39,7 @@ export function Home() {
     refreshEvents();
     const eventName = getEventsUpdatedEventName();
     window.addEventListener(eventName, refreshEvents);
-    return () => {
+  return () => {
       window.removeEventListener(eventName, refreshEvents);
     };
   }, [refreshEvents]);

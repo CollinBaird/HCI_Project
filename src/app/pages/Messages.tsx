@@ -1,7 +1,10 @@
+import React from "react";
 import { MessageSquare, Send, Search, User, Building2, ChefHat } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { useState, useEffect, useRef, useCallback } from "react";
+
+    // Why we built this page: Keep vendor and organizer communication organized around event planning.
 import {
   getStoredConversations,
   addMessageToConversation,
@@ -16,6 +19,7 @@ function ConversationIcon({ type }: { type: Conversation["type"] }) {
 }
 
 export function Messages() {
+  // This page shows booking-linked conversations and lets users continue message threads.
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [draft, setDraft] = useState("");
@@ -30,7 +34,7 @@ export function Messages() {
     refresh();
     const eventName = getConversationsUpdatedEventName();
     window.addEventListener(eventName, refresh);
-    return () => window.removeEventListener(eventName, refresh);
+  return () => window.removeEventListener(eventName, refresh);
   }, [refresh]);
 
   useEffect(() => {

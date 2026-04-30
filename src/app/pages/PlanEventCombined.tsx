@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Calendar } from "../components/ui/calendar";
 import { TimePicker15 } from "../components/TimePicker15";
+
+    // Why we built this page: Support end-to-end planning when users need both venue and catering in one flow.
 import {
   addStoredEvent,
   addBookingConversation,
@@ -13,6 +15,7 @@ import {
 } from "../eventStore";
 
 export function PlanEventCombined() {
+  // This page coordinates a two-step venue+catering selection and final combined booking details.
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
   const [eventTime, setEventTime] = React.useState("");
@@ -29,7 +32,7 @@ export function PlanEventCombined() {
     const eventName = getCombinedDraftUpdatedEventName();
     const handleUpdate = () => setDraft(getCombinedPlanDraft());
     window.addEventListener(eventName, handleUpdate);
-    return () => window.removeEventListener(eventName, handleUpdate);
+  return () => window.removeEventListener(eventName, handleUpdate);
   }, []);
 
   const handleComplete = () => {

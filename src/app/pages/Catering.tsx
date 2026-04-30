@@ -7,7 +7,10 @@ import { Calendar } from "../components/ui/calendar";
 import { TimePicker15 } from "../components/TimePicker15";
 import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from "../eventStore";
 
+  // Why we built this page: Streamline caterer selection and booking details in one guided process.
+
 export function Catering() {
+  // This page supports both browse-only and booking flows, depending on route query params.
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const formSectionRef = React.useRef<HTMLDivElement | null>(null);
@@ -141,7 +144,6 @@ export function Catering() {
 
     navigate("/calendar");
   };
-
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto">

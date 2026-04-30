@@ -11,16 +11,22 @@ import { Organization } from "./pages/Organization";
 import { PlanEvent } from "./pages/PlanEvent";
 import { PlanEventCombined } from "./pages/PlanEventCombined";
 
+// Central route map for the app. All pages render inside Layout.
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: Layout,
     children: [
+      // Home/dashboard
       { index: true, Component: Home },
+
+      // Booking flows
       { path: "venues", Component: Venues },
       { path: "catering", Component: Catering },
       { path: "plan-event", Component: PlanEvent },
       { path: "plan-event/combined", Component: PlanEventCombined },
+
+      // Management/communication pages
       { path: "calendar", Component: CalendarPage },
       { path: "messages", Component: Messages },
       { path: "settings", Component: Settings },
