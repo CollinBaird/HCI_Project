@@ -184,7 +184,7 @@ export function CalendarPage() {
               <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
               <div className="space-y-2">
                 <button
-                  onClick={() => navigate("/plan-event")}
+                  onClick={() => navigate("/home/plan-event")}
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Add New Event

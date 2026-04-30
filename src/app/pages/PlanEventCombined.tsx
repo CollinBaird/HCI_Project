@@ -62,6 +62,7 @@ export function PlanEventCombined() {
       time: eventTime,
       partySize: Number(partySize),
       type: "venue",
+      pricePerHour: draft.venuePricePerHour,
     });
 
     // Add conversation for caterer
@@ -73,12 +74,13 @@ export function PlanEventCombined() {
       time: eventTime,
       partySize: Number(partySize),
       type: "catering",
+      pricePerPerson: draft.catererPricePerPerson,
     });
 
     clearCombinedPlanDraft();
     setShowSuccess(true);
     setTimeout(() => {
-      navigate("/");
+      navigate("/home");
     }, 2000);
   };
 
@@ -108,7 +110,7 @@ export function PlanEventCombined() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <button
-                onClick={() => navigate("/venues?selectOnly=1&returnTo=/plan-event/combined")}
+                onClick={() => navigate("/home/venues?selectOnly=1&returnTo=/home/plan-event/combined")}
                 className="w-full rounded-lg bg-blue-600 text-white px-4 py-3 hover:bg-blue-700 transition-colors"
               >
                 Select Venue
@@ -117,7 +119,7 @@ export function PlanEventCombined() {
 
             <div>
               <button
-                onClick={() => navigate("/catering?selectOnly=1&returnTo=/plan-event/combined")}
+                onClick={() => navigate("/home/catering?selectOnly=1&returnTo=/home/plan-event/combined")}
                 className="w-full rounded-lg bg-blue-600 text-white px-4 py-3 hover:bg-blue-700 transition-colors"
               >
                 Select Catering

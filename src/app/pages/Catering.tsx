@@ -5,7 +5,7 @@ import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Calendar } from "../components/ui/calendar";
 import { TimePicker15 } from "../components/TimePicker15";
-import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from "../eventStore";
+import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft, getStoredEvents } from "../eventStore";
 
   // Why we built this page: Streamline caterer selection and booking details in one guided process.
 
@@ -35,6 +35,13 @@ export function Catering() {
       image: "https://images.unsplash.com/photo-1555244162-803834f70033?w=800&h=600&fit=crop",
       specialties: ["Corporate Events", "Weddings", "Buffet Style"],
       dietaryOptions: ["Vegetarian", "Vegan", "Gluten-Free", "Halal"],
+      unavailableDates: [
+        "2026-05-02","2026-05-03","2026-05-09","2026-05-10","2026-05-16","2026-05-17",
+        "2026-05-23","2026-05-24","2026-05-30","2026-05-31",
+        "2026-06-06","2026-06-07","2026-06-13","2026-06-14","2026-06-20","2026-06-21",
+        "2026-06-27","2026-06-28",
+        "2026-07-04","2026-07-05","2026-07-11","2026-07-12","2026-07-18","2026-07-19",
+      ],
     },
     {
       id: 2,
@@ -47,6 +54,13 @@ export function Catering() {
       image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop",
       specialties: ["Plated Dinners", "Wine Pairing", "Custom Menus"],
       dietaryOptions: ["Vegetarian", "Pescatarian", "Keto"],
+      unavailableDates: [
+        "2026-05-01","2026-05-02","2026-05-08","2026-05-09","2026-05-15","2026-05-16",
+        "2026-05-22","2026-05-23","2026-05-29","2026-05-30",
+        "2026-06-05","2026-06-06","2026-06-12","2026-06-13","2026-06-19","2026-06-20",
+        "2026-06-26","2026-06-27",
+        "2026-07-03","2026-07-04","2026-07-10","2026-07-11","2026-07-17","2026-07-18",
+      ],
     },
     {
       id: 3,
@@ -59,6 +73,12 @@ export function Catering() {
       image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&h=600&fit=crop",
       specialties: ["Outdoor Events", "Casual Gatherings", "Live Cooking"],
       dietaryOptions: ["Vegetarian", "Gluten-Free"],
+      unavailableDates: [
+        "2026-05-02","2026-05-03","2026-05-09","2026-05-10","2026-05-16","2026-05-17",
+        "2026-05-23","2026-05-24","2026-05-30","2026-05-31",
+        "2026-06-06","2026-06-07","2026-06-13","2026-06-14","2026-06-20","2026-06-21",
+        "2026-07-04","2026-07-05","2026-07-11","2026-07-12","2026-07-18","2026-07-19",
+      ],
     },
     {
       id: 4,
@@ -71,12 +91,29 @@ export function Catering() {
       image: "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=800&h=600&fit=crop",
       specialties: ["Tapas Style", "Family Platters", "Healthy Options"],
       dietaryOptions: ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free"],
+      unavailableDates: [
+        "2026-05-01","2026-05-02","2026-05-03","2026-05-08","2026-05-09","2026-05-10",
+        "2026-05-15","2026-05-16","2026-05-17","2026-05-22","2026-05-23","2026-05-24",
+        "2026-05-29","2026-05-30","2026-05-31",
+        "2026-06-05","2026-06-06","2026-06-07","2026-06-12","2026-06-13","2026-06-14",
+        "2026-06-19","2026-06-20","2026-06-21","2026-06-26","2026-06-27","2026-06-28",
+        "2026-07-03","2026-07-04","2026-07-05","2026-07-10","2026-07-11","2026-07-12",
+      ],
     },
   ];
 
   const selectedCaterer = cateringOptions.find((caterer) => caterer.id === selectedCatererId);
   const selectOnly = searchParams.get("selectOnly") === "1";
-  const returnTo = searchParams.get("returnTo") || "/plan-event/combined";
+  const returnTo = searchParams.get("returnTo") || "/home/plan-event/combined";
+
+  const disabledDatesForCaterer = React.useMemo(() => {
+    if (!selectedCaterer) return [];
+    const staticDates = selectedCaterer.unavailableDates.map((d) => new Date(d + "T12:00:00"));
+    const userBooked = getStoredEvents()
+      .filter((e) => e.catererName === selectedCaterer.name)
+      .map((e) => new Date(e.date + "T12:00:00"));
+    return [...staticDates, ...userBooked];
+  }, [selectedCaterer]);
 
   const filteredCateringOptions = cateringOptions.filter((caterer) => {
     const query = searchQuery.toLowerCase();
@@ -97,7 +134,7 @@ export function Catering() {
     }
 
     if (selectOnly) {
-      updateCombinedPlanDraft({ catererName: caterer.name });
+      updateCombinedPlanDraft({ catererName: caterer.name, catererPricePerPerson: caterer.pricePerPerson });
       navigate(returnTo);
       return;
     }
@@ -130,6 +167,7 @@ export function Catering() {
       partySize: Number(partySize),
       organizationName,
       catererName: selectedCaterer.name,
+      pricePerPerson: selectedCaterer.pricePerPerson,
     });
 
     addBookingConversation({
@@ -140,9 +178,10 @@ export function Catering() {
       time: eventTime,
       partySize: Number(partySize),
       type: "catering",
+      pricePerPerson: selectedCaterer.pricePerPerson,
     });
 
-    navigate("/calendar");
+    navigate("/home/calendar");
   };
   return (
     <div className="p-8">
@@ -273,8 +312,18 @@ export function Catering() {
                     selected={selectedDate}
                     onSelect={setSelectedDate}
                     className="rounded-lg"
+                    disabled={disabledDatesForCaterer}
+                    classNames={{
+                      day_disabled: "bg-gray-400 text-white opacity-100 cursor-not-allowed line-through",
+                    }}
                   />
                 </div>
+                {disabledDatesForCaterer.length > 0 && (
+                  <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                    <span className="inline-block w-3 h-3 rounded-sm bg-gray-400" />
+                    Dates already booked for this caterer
+                  </p>
+                )}
               </div>
 
               <div className="space-y-4">
@@ -300,6 +349,16 @@ export function Catering() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+
+                {partySize && Number(partySize) > 0 && (
+                  <div className="rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm">
+                    <p className="text-blue-700 font-semibold mb-1">Price Estimate</p>
+                    <div className="flex justify-between text-blue-600">
+                      <span>${selectedCaterer.pricePerPerson}/person × {partySize} guests</span>
+                      <span className="font-bold">${(selectedCaterer.pricePerPerson * Number(partySize)).toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="location">

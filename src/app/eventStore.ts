@@ -37,6 +37,8 @@ export type PlannedEvent = {
   partySize?: number;
   organizationName?: string;
   catererName?: string;
+  pricePerHour?: number;
+  pricePerPerson?: number;
 };
 
 // LocalStorage keys and custom browser events used to keep pages in sync.
@@ -49,6 +51,8 @@ export type CombinedPlanDraft = {
   venueName: string;
   venueLocation: string;
   catererName: string;
+  venuePricePerHour?: number;
+  catererPricePerPerson?: number;
 };
 
 // Event storage helpers 
@@ -176,9 +180,11 @@ export function addBookingConversation(params: {
   time: string;
   partySize: number;
   type: "venue" | "catering" | "combined";
+  pricePerHour?: number;
+  pricePerPerson?: number;
 }) {
   // Create a friendly first message so the conversation is not empty after booking.
-  const { bookingId, vendorName, organizationName, date, time, partySize, type } = params;
+  const { bookingId, vendorName, organizationName, date, time, partySize, type, pricePerHour, pricePerPerson } = params;
   const formattedDate = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -188,10 +194,16 @@ export function addBookingConversation(params: {
 
   const userName = "Parker Savage";
   const contactLine = "Please don't hesitate to contact us if you need anything — we're here to help make your event a success!";
+  const priceNote =
+    type === "venue" && pricePerHour
+      ? ` Your venue rate is $${pricePerHour}/hour.`
+      : type === "catering" && pricePerPerson
+      ? ` Our pricing is $${pricePerPerson} per person (estimated total: $${pricePerPerson * partySize}).`
+      : "";
   const welcomeContent =
     type === "venue"
-      ? `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate} at ${time} for ${partySize} guests! We are thrilled to host your event and look forward to making it a memorable occasion. ${contactLine}`
-      : `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate} at ${time} for ${partySize} guests! We're excited to provide exceptional catering service for your event. ${contactLine}`;
+      ? `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate} at ${time} for ${partySize} guests!${priceNote} We are thrilled to host your event and look forward to making it a memorable occasion. ${contactLine}`
+      : `Hello ${userName}, thank you for booking with ${vendorName} for ${organizationName} on ${formattedDate} at ${time} for ${partySize} guests!${priceNote} We're excited to provide exceptional catering service for your event. ${contactLine}`;
 
   const timeStr = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 
