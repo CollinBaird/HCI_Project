@@ -1,6 +1,7 @@
 # UPlan
-
-UPlan is a React + Vite event planning dashboard prototype. It supports venue and catering planning flows, a combined planning flow, calendar management (including cancel actions), profile updates, and local message threads.
+Group Name: College Event Planning
+Members: Collin Baird, Victoria Rowe, Hunter Mena, and Parker Savage
+UPlan is a React + Vite event planning dashboard prototype. It supports venue and catering planning flows, a combined planning flow, calendar management, profile updates, and local message threads.
 
 ## Run locally
 
@@ -46,7 +47,7 @@ This project is currently frontend-only and stores app data in browser `localSto
 - combined planning draft state
 - conversations/messages
 
-Core storage logic is in `src/app/eventStore.ts`.
+Storage logic is in `src/app/eventStore.ts`.
 
 ## Pages overview (`src/app/pages`)
 

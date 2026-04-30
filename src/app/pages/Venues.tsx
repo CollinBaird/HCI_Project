@@ -11,6 +11,7 @@ import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from 
   // Why we built this page: Make venue discovery and booking structured, fast, and consistent.
 
 export function Venues() {
+  // This page supports both browse-only and booking flows, depending on route query params.
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const formSectionRef = React.useRef<HTMLDivElement | null>(null);

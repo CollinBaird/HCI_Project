@@ -25,6 +25,7 @@ import {
 } from "../eventStore";
 
 export function Home() {
+  // This page summarizes current bookings and gives quick actions for edits/cancellations.
   const [upcomingEvents, setUpcomingEvents] = React.useState<PlannedEvent[]>([]);
   const [editingEvent, setEditingEvent] = React.useState<PlannedEvent | null>(null);
   const [editForm, setEditForm] = React.useState({ title: "", date: "", time: "", venue: "", partySize: "" });

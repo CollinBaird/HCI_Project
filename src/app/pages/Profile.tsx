@@ -7,6 +7,7 @@ import { getEventsUpdatedEventName, getStoredEvents, type PlannedEvent } from ".
 import { useNavigate } from "react-router";
 
 export function Profile() {
+  // This page combines editable profile details with live event-derived metrics/activity.
   const navigate = useNavigate();
 
   const [userProfile, setUserProfile] = React.useState({

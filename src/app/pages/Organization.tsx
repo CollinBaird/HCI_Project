@@ -2,7 +2,6 @@ import React from "react";
 import { Building2, Users, Target, Mail, Phone } from "lucide-react";
 import { Card } from "../components/ui/card";
 
-  // Why we built this page: Show team context and contact information for coordination and visibility.
 import {
   PieChart,
   Pie,
@@ -20,6 +19,7 @@ import {
 } from "recharts";
 
 export function Organization() {
+  // This page gives team context so users can quickly find responsibilities and contact info.
   const team = [
     { name: "Parker Savage", role: "Event Director", email: "parker@uplan.com" },
     { name: "Collin Baird", role: "Vendor Manager", email: "collin@uplan.com" },

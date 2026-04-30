@@ -15,6 +15,7 @@ import {
 } from "../eventStore";
 
 export function PlanEventCombined() {
+  // This page coordinates a two-step venue+catering selection and final combined booking details.
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(undefined);
   const [eventTime, setEventTime] = React.useState("");

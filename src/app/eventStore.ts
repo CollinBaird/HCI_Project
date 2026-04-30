@@ -51,7 +51,7 @@ export type CombinedPlanDraft = {
   catererName: string;
 };
 
-// Event storage helpers -------------------------------------------------------
+// Event storage helpers 
 // These functions read/write booked events and notify listeners after updates.
 export function getStoredEvents(): PlannedEvent[] {
   if (typeof window === "undefined") {
@@ -98,7 +98,7 @@ export function getEventsUpdatedEventName() {
   return EVENTS_UPDATED;
 }
 
-// Combined flow draft helpers -------------------------------------------------
+// Combined flow draft helpers 
 // We keep "in-progress" combined selections here while users move between pages.
 export function getCombinedPlanDraft(): CombinedPlanDraft {
   if (typeof window === "undefined") {
@@ -145,7 +145,7 @@ export function getCombinedDraftUpdatedEventName() {
   return COMBINED_DRAFT_UPDATED;
 }
 
-// Conversation/message storage helpers ----------------------------------------
+// Conversation/message storage helpers
 // Conversation threads are also local-first and update live via events.
 const CONVERSATIONS_KEY = "uplan_conversations";
 const CONVERSATIONS_UPDATED = "uplan-conversations-updated";

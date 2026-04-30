@@ -14,6 +14,7 @@ import {
 } from "../eventStore";
 
 export function CalendarPage() {
+  // This page is the source of truth for viewing, inspecting, and canceling stored events.
   const navigate = useNavigate();
   const [events, setEvents] = React.useState<PlannedEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = React.useState<PlannedEvent | null>(null);

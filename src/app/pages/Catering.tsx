@@ -10,6 +10,7 @@ import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from 
   // Why we built this page: Streamline caterer selection and booking details in one guided process.
 
 export function Catering() {
+  // This page supports both browse-only and booking flows, depending on route query params.
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const formSectionRef = React.useRef<HTMLDivElement | null>(null);

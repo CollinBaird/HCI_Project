@@ -19,6 +19,7 @@ function ConversationIcon({ type }: { type: Conversation["type"] }) {
 }
 
 export function Messages() {
+  // This page shows booking-linked conversations and lets users continue message threads.
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [draft, setDraft] = useState("");
