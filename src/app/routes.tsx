@@ -1,3 +1,4 @@
+import React from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./pages/Home";
@@ -12,19 +13,21 @@ import { PlanEvent } from "./pages/PlanEvent";
 import { PlanEventCombined } from "./pages/PlanEventCombined";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { RouteError } from "./pages/RouteError";
 
 export const router = createBrowserRouter([
   // Redirect root to login by default
-  { path: "/", element: <Navigate to="/login" replace /> },
+  { path: "/", element: <Navigate to="/login" replace />, errorElement: <RouteError /> },
 
   // Auth pages — outside Layout so no sidebar is shown
-  { path: "/login", Component: Login },
-  { path: "/register", Component: Register },
+  { path: "/login", Component: Login, errorElement: <RouteError /> },
+  { path: "/register", Component: Register, errorElement: <RouteError /> },
 
   // Main app — inside Layout so sidebar is shown
   {
     path: "/home",
     Component: Layout,
+    errorElement: <RouteError />,
     children: [
       { index: true, Component: Home },
       { path: "venues", Component: Venues },
@@ -38,4 +41,6 @@ export const router = createBrowserRouter([
       { path: "organization", Component: Organization },
     ],
   },
+  // Catch unknown URLs so users do not land on the default router crash screen.
+  { path: "*", element: <Navigate to="/login" replace /> },
 ]);

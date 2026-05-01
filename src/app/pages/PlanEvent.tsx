@@ -19,21 +19,21 @@ export function PlanEvent() {
       description: "Browse catering partners, specialties, and dietary options.",
       icon: Utensils,
       image: "/images/cater.png",
-      onClick: () => navigate("/catering"),
+      onClick: () => navigate("/home/catering"),
     },
     {
       title: "Venue",
       description: "Explore available venues with capacity, pricing, and amenities.",
       icon: MapPin,
       image: "/images/venue.png",
-      onClick: () => navigate("/venues"),
+      onClick: () => navigate("/home/venues"),
     },
     {
       title: "Catering + Venue",
       description: "Plan both together with linked selections and placeholders.",
       icon: Layers,
       image: "/images/catervenue.png",
-      onClick: () => navigate("/plan-event/combined"),
+      onClick: () => navigate("/home/plan-event/combined"),
     },
   ];
   return (

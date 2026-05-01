@@ -6,7 +6,7 @@ import { Badge } from "../components/ui/badge";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { Calendar } from "../components/ui/calendar";
 import { TimePicker15 } from "../components/TimePicker15";
-import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft } from "../eventStore";
+import { addStoredEvent, addBookingConversation, updateCombinedPlanDraft, getStoredEvents } from "../eventStore";
 
   // Why we built this page: Make venue discovery and booking structured, fast, and consistent.
 
@@ -24,7 +24,7 @@ export function Venues() {
   const [searchQuery, setSearchQuery] = useState("");
   const [budgetFilter, setBudgetFilter] = useState<string>("");
   const selectOnly = searchParams.get("selectOnly") === "1";
-  const returnTo = searchParams.get("returnTo") || "/plan-event/combined";
+  const returnTo = searchParams.get("returnTo") || "/home/plan-event/combined";
 
   const venues = [
     {
@@ -38,6 +38,13 @@ export function Venues() {
       image: "/images/beta.png",
       amenities: ["WiFi", "AV Equipment", "Catering Kitchen", "Parking"],
       available: true,
+      unavailableDates: [
+        "2026-05-01","2026-05-02","2026-05-08","2026-05-09","2026-05-15","2026-05-16",
+        "2026-05-22","2026-05-23","2026-05-29","2026-05-30",
+        "2026-06-05","2026-06-06","2026-06-12","2026-06-13","2026-06-19","2026-06-20",
+        "2026-06-26","2026-06-27",
+        "2026-07-03","2026-07-04","2026-07-10","2026-07-11","2026-07-17","2026-07-18",
+      ],
     },
     {
       id: 2,
@@ -50,6 +57,14 @@ export function Venues() {
       image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
       amenities: ["Outdoor Space", "Garden Views", "Tent Available", "Parking"],
       available: true,
+      unavailableDates: [
+        "2026-05-02","2026-05-03","2026-05-09","2026-05-10","2026-05-16","2026-05-17",
+        "2026-05-23","2026-05-24","2026-05-30","2026-05-31",
+        "2026-06-06","2026-06-07","2026-06-13","2026-06-14","2026-06-20","2026-06-21",
+        "2026-06-27","2026-06-28",
+        "2026-07-04","2026-07-05","2026-07-11","2026-07-12","2026-07-18","2026-07-19",
+        "2026-07-25","2026-07-26",
+      ],
     },
     {
       id: 3,
@@ -62,6 +77,13 @@ export function Venues() {
       image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop",
       amenities: ["WiFi", "AV Equipment", "Multiple Rooms", "Full Catering"],
       available: false,
+      unavailableDates: [
+        "2026-05-05","2026-05-06","2026-05-07","2026-05-12","2026-05-13","2026-05-14",
+        "2026-05-19","2026-05-20","2026-05-21","2026-05-26","2026-05-27","2026-05-28",
+        "2026-06-02","2026-06-03","2026-06-04","2026-06-09","2026-06-10","2026-06-11",
+        "2026-06-16","2026-06-17","2026-06-18","2026-06-23","2026-06-24","2026-06-25",
+        "2026-07-07","2026-07-08","2026-07-09","2026-07-14","2026-07-15","2026-07-16",
+      ],
     },
     {
       id: 4,
@@ -74,10 +96,27 @@ export function Venues() {
       image: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=800&h=600&fit=crop",
       amenities: ["City Views", "Bar", "Outdoor Deck", "Elevator Access"],
       available: true,
+      unavailableDates: [
+        "2026-05-01","2026-05-02","2026-05-08","2026-05-09","2026-05-15","2026-05-16",
+        "2026-05-22","2026-05-23","2026-05-29","2026-05-30",
+        "2026-06-05","2026-06-06","2026-06-12","2026-06-13","2026-06-19","2026-06-20",
+        "2026-06-26","2026-06-27",
+        "2026-07-03","2026-07-04","2026-07-10","2026-07-11","2026-07-17","2026-07-18",
+        "2026-07-24","2026-07-25",
+      ],
     },
   ];
 
   const selectedVenue = venues.find((venue) => venue.id === selectedVenueId);
+
+  const bookedDatesForVenue = React.useMemo(() => {
+    if (!selectedVenue) return [];
+    const staticDates = selectedVenue.unavailableDates.map((d) => new Date(d + "T12:00:00"));
+    const userBooked = getStoredEvents()
+      .filter((e) => e.venue === selectedVenue.name)
+      .map((e) => new Date(e.date + "T12:00:00"));
+    return [...staticDates, ...userBooked];
+  }, [selectedVenue]);
 
   const filteredVenues = venues.filter((venue) => {
     const query = searchQuery.toLowerCase();
@@ -101,6 +140,7 @@ export function Venues() {
       updateCombinedPlanDraft({
         venueName: venue.name,
         venueLocation: venue.location,
+        venuePricePerHour: venue.pricePerHour,
       });
       navigate(returnTo);
       return;
@@ -134,6 +174,7 @@ export function Venues() {
       type: "venue",
       partySize: Number(partySize),
       organizationName,
+      pricePerHour: selectedVenue.pricePerHour,
     });
 
     addBookingConversation({
@@ -144,9 +185,10 @@ export function Venues() {
       time: eventTime,
       partySize: Number(partySize),
       type: "venue",
+      pricePerHour: selectedVenue.pricePerHour,
     });
 
-    navigate("/calendar");
+    navigate("/home/calendar");
   };
   return (
     <div className="p-8">
@@ -275,8 +317,18 @@ export function Venues() {
                       selected={selectedDate}
                       onSelect={setSelectedDate}
                       className="rounded-lg"
+                      disabled={bookedDatesForVenue}
+                      classNames={{
+                        day_disabled: "bg-gray-400 text-white opacity-100 cursor-not-allowed line-through",
+                      }}
                     />
                   </div>
+                  {bookedDatesForVenue.length > 0 && (
+                    <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                      <span className="inline-block w-3 h-3 rounded-sm bg-gray-400" />
+                      Dates already booked for this venue
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-4">
